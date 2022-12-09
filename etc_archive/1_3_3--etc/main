@@ -1,0 +1,43 @@
+#!/bin/sh
+BOOTLOGO="/mnt/boot-logo"
+
+export HOME=/mnt
+export SDL_NOMOUSE=1
+
+START=/mnt/autoexec.sh
+
+echo -e "\e[?1c" #replace 1 with 3 to see text
+#/mnt/kernel/setcolors /mnt/kernel/colors
+
+modprobe r61520fb.ko
+
+#Check if fat32 is flagged as "dirty", and if so unmount, repair, remount
+if dmesg | grep "mmcblk0p4" > /dev/null;  then
+echo -e "\e[31mUnclean shutdown detected.\e[0m"
+echo -e "\e[32mChecking FAT32 partition...\e[0m"
+umount /dev/mmcblk0p4
+fsck.vfat -y /dev/mmcblk0p4 > /dev/null; 
+mount /dev/mmcblk0p4 /mnt -t vfat -o rw,sync,utf8
+echo -e "\e[32mCheck complete.\e[0m"
+fi
+
+clear
+
+/mnt/kernel/daemon > /dev/null 2>&1
+
+if [ -e $BOOTLOGO ]
+then
+/mnt/boot-logo > /dev/null 2>&1 
+fi
+
+while [ 1 ]
+do
+	if test -f "$START"; then
+		source $START
+    	else
+
+        	cd /mnt/gmenu2x;
+        	./gmenu2x > /dev/null 2>&1;
+	fi
+        clear
+done
