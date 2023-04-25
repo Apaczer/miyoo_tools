@@ -7,49 +7,49 @@ void calc_multip(int mhz) {
 //  mhz = 864;
     std::cout << "\nif clock is=" << mhz << "MHz";
     m = mhz / 24 ;
-    if (((m > 32) && (!(m%2) || !(m%3) || !(m%4))) && (m <= 128)) {
+    if ( (m <= 31 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
     std::cout << "\nfor divf=1 the mul=" << m;
     } else {
     std::cout << "\nfor divf=1 there is no mul";
     }
     m = mhz / 24 * 2;
-    if (((m > 32) && (!(m%2) || !(m%3) || !(m%4))) && (m <= 128)) {
+    if ( (m <= 31 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
     std::cout << "\nfor divf=2 the mul=" << m;
     } else {
     std::cout << "\nfor divf=2 there is no mul";
     }
     m = mhz / 24 * 3;
-    if (((m > 32) && (!(m%2) || !(m%3) || !(m%4))) && (m <= 128)) {
+    if ( (m <= 31 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
     std::cout << "\nfor divf=3 the mul=" << m;
     } else {
     std::cout << "\nfor divf=3 there is no mul";
     }
     m = mhz / 24 * 4;
-    if (((m > 32) && (!(m%2) || !(m%3) || !(m%4))) && (m <= 128)) {
+    if ( (m <= 31 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
     std::cout << "\nfor divf=4 the mul=" << m;
     } else {
     std::cout << "\nfor divf=4 there is no mul";
     }
     m = mhz / 24 * 6;
-    if (((m > 32) && (!(m%2) || !(m%3) || !(m%4))) && (m <= 128)) {
+    if ( (m <= 31 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
     std::cout << "\nfor divf=6 the mul=" << m;
     } else {
     std::cout << "\nfor divf=6 there is no mul";
     }
     m = mhz / 24 * 8;
-    if (((m > 32) && (!(m%2) || !(m%3) || !(m%4))) && (m <= 128)) {
+    if ( (m <= 31 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
     std::cout << "\nfor divf=8 the mul=" << m;
     } else {
     std::cout << "\nfor divf=8 there is no mul";
     }
     m = mhz / 24 * 12;
-    if (((m > 32) && (!(m%2) || !(m%3) || !(m%4))) && (m <= 128)) {
+    if ( (m <= 31 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
     std::cout << "\nfor divf=12 the mul=" << m;
     } else {
     std::cout << "\nfor divf=12 there is no mul";
     }
     m = mhz / 24 * 16;
-    if (((m > 32) && (!(m%2) || !(m%3) || !(m%4))) && (m <= 128)) {
+    if ( (m <= 31 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
     std::cout << "\nfor divf=16 the mul=" << m;
     } else {
     std::cout << "\nfor divf=16 there is no mul";
@@ -107,6 +107,13 @@ void clock(uint8_t mul, uint8_t divf) {
 }
 
 int main() {
-    calc_multip(864); // type "mhz" value to output possible "mul,divf" values
-	clock(108,3); // type "mul,divf" values to output N,K,M,P factors for oc_table[]
+    int mhz, mul, divf;
+    std::cout << "Type \"mhz\":" ;
+    std::cin >> mhz ;
+    std::cout << "Type \"mul\":";
+    std::cin >> mul ;
+    std::cout << "Type \"divf\":";
+    std::cin >> divf ;
+    calc_multip(mhz); // type "mhz" value to output possible "mul,divf" values
+	clock(mul,divf); // type "mul,divf" values to output N,K,M,P factors for oc_table[]
 }
