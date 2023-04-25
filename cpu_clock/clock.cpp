@@ -138,12 +138,12 @@ void clock(uint8_t mul, uint8_t divf) {
     int n_v = n;
     int k_v = k;
     int m_v = m;
-    int p_v = p;
     int M = mul;
     int D = divf;
     
     p--;
     if(p == 3) p = 2;
+    int p_v = p;
 
     uint32_t value = (1 << 31) |((n - 1) << 8) | ((k - 1) << 4) | (m - 1) | (p << 16);
 
@@ -154,8 +154,8 @@ void clock(uint8_t mul, uint8_t divf) {
     std::cout << "\nn_factor=" << n_v - 1;
     std::cout << "\nk_factor=" << k_v - 1;
     std::cout << "\nm_factor=" << m_v - 1;
-    std::cout << "\np_factor=" << p_v - 1;
-    std::cout << "\noc_table[] string:\n((" << y << ") << 18) | (" << n_v - 1 << " << 8) | (" << k_v - 1 << " << 4) | (" << m_v - 1 << ") | (" << p_v -1 << " << 16) \n" ;
+    std::cout << "\np_factor=" << p_v;
+    std::cout << "\noc_table[] string:\n((" << y << ") << 18) | (" << n_v - 1 << " << 8) | (" << k_v - 1 << " << 4) | (" << m_v - 1 << ") | (" << p_v << " << 16) \n" ;
 }
 
 int main() {
