@@ -2,57 +2,108 @@
 #include <iostream>
 #include <bitset>
 
-void calc_multip(int mhz) {
-    int m = 1;
+void calc_multip(float mhz) {
+    float mul ;
 //  mhz = 864;
     std::cout << "\nif clock is=" << mhz << "MHz";
-    m = mhz / 24 ;
-    if ( (m <= 31 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
-    std::cout << "\nfor divf=1 the mul=" << m;
+    mul = mhz / 24 ;
+    if (mul == (int)mul) {
+        int m = (int)mul;
+        if ( (m <= 31 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
+        std::cout << "\nfor divf=1 the mul=" << m;
+        } else {
+        std::cout << "\nfor divf=1 there is no mul";
+        }
     } else {
-    std::cout << "\nfor divf=1 there is no mul";
+        std::cout << "\nmul is non integer value!";
     }
-    m = mhz / 24 * 2;
-    if ( (m <= 31 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
-    std::cout << "\nfor divf=2 the mul=" << m;
+    mul = mhz / 24 * 2;
+    if (mul == (int)mul) {
+        int m = (int)mul;
+        if ( (m <= 31 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
+        std::cout << "\nfor divf=2 the mul=" << m;
+        } else {
+        std::cout << "\nfor divf=2 there is no mul";
+        }
     } else {
-    std::cout << "\nfor divf=2 there is no mul";
+        std::cout << "\nmul is non integer value!";
     }
-    m = mhz / 24 * 3;
-    if ( (m <= 31 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
-    std::cout << "\nfor divf=3 the mul=" << m;
+    mul = mhz / 24 * 3;
+    if (mul == (int)mul) {
+        int m = (int)mul;
+        if ( (m <= 31 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
+        std::cout << "\nfor divf=3 the mul=" << m;
+        } else {
+        std::cout << "\nfor divf=3 there is no mul";
+        }
     } else {
-    std::cout << "\nfor divf=3 there is no mul";
+        std::cout << "\nmul is non integer value!";
     }
-    m = mhz / 24 * 4;
-    if ( (m <= 31 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
-    std::cout << "\nfor divf=4 the mul=" << m;
+    mul = mhz / 24 * 4;
+    if (mul == (int)mul) {
+        int m = (int)mul;
+        if ( (m <= 31 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
+        std::cout << "\nfor divf=4 the mul=" << m;
+        } else {
+        std::cout << "\nfor divf=4 there is no mul";
+        }
     } else {
-    std::cout << "\nfor divf=4 there is no mul";
+        std::cout << "\nmul is non integer value!";
     }
-    m = mhz / 24 * 6;
-    if ( (m <= 31 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
-    std::cout << "\nfor divf=6 the mul=" << m;
+    mul = mhz / 24 * 4;
+    if (mul == (int)mul) {
+        int m = (int)mul;
+        if ( (m <= 31 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
+        std::cout << "\nfor divf=4 the mul=" << m;
+        } else {
+        std::cout << "\nfor divf=4 there is no mul";
+        }
     } else {
-    std::cout << "\nfor divf=6 there is no mul";
+        std::cout << "\nmul is non integer value!";
     }
-    m = mhz / 24 * 8;
-    if ( (m <= 31 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
-    std::cout << "\nfor divf=8 the mul=" << m;
+    mul = mhz / 24 * 6;
+    if (mul == (int)mul) {
+        int m = (int)mul;
+        if ( (m <= 31 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
+        std::cout << "\nfor divf=6 the mul=" << m;
+        } else {
+        std::cout << "\nfor divf=6 there is no mul";
+        }
     } else {
-    std::cout << "\nfor divf=8 there is no mul";
+        std::cout << "\nmul is non integer value!";
     }
-    m = mhz / 24 * 12;
-    if ( (m <= 31 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
-    std::cout << "\nfor divf=12 the mul=" << m;
+    mul = mhz / 24 * 8;
+    if (mul == (int)mul) {
+        int m = (int)mul;
+        if ( (m <= 31 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
+        std::cout << "\nfor divf=8 the mul=" << m;
+        } else {
+        std::cout << "\nfor divf=8 there is no mul";
+        }
     } else {
-    std::cout << "\nfor divf=12 there is no mul";
+        std::cout << "\nmul is non integer value!";
     }
-    m = mhz / 24 * 16;
-    if ( (m <= 31 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
-    std::cout << "\nfor divf=16 the mul=" << m;
+    mul = mhz / 24 * 12;
+    if (mul == (int)mul) {
+        int m = (int)mul;
+        if ( (m <= 31 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
+        std::cout << "\nfor divf=12 the mul=" << m;
+        } else {
+        std::cout << "\nfor divf=12 there is no mul";
+        }
     } else {
-    std::cout << "\nfor divf=16 there is no mul";
+        std::cout << "\nmul is non integer value!";
+    }
+    mul = mhz / 24 * 16;
+    if (mul == (int)mul) {
+        int m = (int)mul;
+        if ( (m <= 31 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
+        std::cout << "\nfor divf=16 the mul=" << m;
+        } else {
+        std::cout << "\nfor divf=16 there is no mul";
+        }
+    } else {
+        std::cout << "\nmul is non integer value!";
     }
 }
 
