@@ -147,7 +147,8 @@ void clock(uint8_t mul, uint8_t divf) {
 
     uint32_t value = (1 << 31) |((n - 1) << 8) | ((k - 1) << 4) | (m - 1) | (p << 16);
 
-    std::cout << "\n\n32bit_reg_value=" << std::bitset<32>(value)  << std::endl;
+    std::cout << "\n\n32bit_reg_value=" << std::bitset<32>(value) << std::endl;
+    printf("in hexadecimal = 0x%X\n",std::bitset<32>(value));
     
     std::cout << y << "MHz=" << "=24Mhz*mul/divf" << "=24*" << M << "/" << D; 
     std::cout << "\nn_factor=" << n_v - 1;
