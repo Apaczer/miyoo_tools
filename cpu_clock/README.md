@@ -10,4 +10,4 @@ gcc -o clock clock.cpp -lstdc++
 ```
 
 * **usage:**  
-change int ``mhz``, ``mul``, ``divf`` values in main and run ``./clock`` app in terminal
+run ``./clock.exe`` app in terminal
