@@ -159,13 +159,18 @@ void clock(uint8_t mul, uint8_t divf) {
 }
 
 int main() {
+// type "mhz" value to output possible "mul,divf" values   
     int mhz, mul, divf;
     std::cout << "Type \"mhz\":" ;
     std::cin >> mhz ;
-    std::cout << "Type \"mul\":";
+
+    calc_multip(mhz); 
+
+// type "mul,divf" values to output N,K,M,P factors for oc_table[]  
+    std::cout << "\n\nType \"mul\":";
     std::cin >> mul ;
     std::cout << "Type \"divf\":";
     std::cin >> divf ;
-    calc_multip(mhz); // type "mhz" value to output possible "mul,divf" values
-	clock(mul,divf); // type "mul,divf" values to output N,K,M,P factors for oc_table[]
+
+	clock(mul,divf); 
 }
