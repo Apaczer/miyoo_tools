@@ -118,7 +118,7 @@ void clock(uint8_t mul, uint8_t divf) {
     // mul = n*k
     // n = 1..32
     // k = 1..4
-    for(k = 1; k <= 4; k++) {
+    for(k = 4; k >= 1; k--) {
         n = mul / k;
         if((n < 32) && (n * k == mul)) break;
     }
