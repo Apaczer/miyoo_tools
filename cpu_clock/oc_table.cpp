@@ -14,7 +14,7 @@ tuple<int, int> calc_multip(float mhz) {
     if (mul == (int)mul) {
         int m = (int)mul;
         d = 1;
-        if ( (m <= 31 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
+        if ( (m <= 32 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
  //       cout << "\nfor divf=1 the mul=" << m;
         return {m, d};
         } else {
@@ -27,7 +27,7 @@ tuple<int, int> calc_multip(float mhz) {
     if (mul == (int)mul) {
         int m = (int)mul;
         d = 2;
-        if ( (m <= 31 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
+        if ( (m <= 32 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
   //      cout << "\nfor divf=2 the mul=" << m;
         return {m, d};
         } else {
@@ -40,7 +40,7 @@ tuple<int, int> calc_multip(float mhz) {
     if (mul == (int)mul) {
         int m = (int)mul;
         d = 3;
-        if ( (m <= 31 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
+        if ( (m <= 32 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
  //       cout << "\nfor divf=3 the mul=" << m;
         return {m, d};
         } else {
@@ -53,7 +53,7 @@ tuple<int, int> calc_multip(float mhz) {
     if (mul == (int)mul) {
         int m = (int)mul;
         d = 4;
-        if ( (m <= 31 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
+        if ( (m <= 32 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
   //      cout << "\nfor divf=4 the mul=" << m;
         return {m, d};
         } else {
@@ -66,7 +66,7 @@ tuple<int, int> calc_multip(float mhz) {
     if (mul == (int)mul) {
         int m = (int)mul;
         d = 6;
-        if ( (m <= 31 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
+        if ( (m <= 32 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
    //    cout << "\nfor divf=6 the mul=" << m;
         return {m, d};
         } else {
@@ -79,7 +79,7 @@ tuple<int, int> calc_multip(float mhz) {
     if (mul == (int)mul) {
         int m = (int)mul;
         d = 8;
-        if ( (m <= 31 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
+        if ( (m <= 32 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
   //      cout << "\nfor divf=8 the mul=" << m;
         return {m, d};
         } else {
@@ -92,7 +92,7 @@ tuple<int, int> calc_multip(float mhz) {
     if (mul == (int)mul) {
         int m = (int)mul;
         d = 12;
-        if ( (m <= 31 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
+        if ( (m <= 32 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
 //        cout << "\nfor divf=12 the mul=" << m;
         return {m, d};
         } else {
@@ -105,7 +105,7 @@ tuple<int, int> calc_multip(float mhz) {
     if (mul == (int)mul) {
         int m = (int)mul;
         d = 16;
-        if ( (m <= 31 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
+        if ( (m <= 32 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
 //        cout << "\nfor divf=16 the mul=" << m;
         return {m, d};
         } else {
@@ -171,7 +171,7 @@ void clock(uint8_t mul, uint8_t divf) {
 //cout << "\nk_factor=" << k_v - 1;
  //   cout << "\nm_factor=" << m_v - 1;
 //    cout << "\np_factor=" << p_v;
-    cout << "(" << y << ") << 18) | (" << n_v - 1 << " << 8) | (" << k_v - 1 << " << 4) | (" << m_v - 1 << ") | (" << p_v << " << 16) \n" ;
+    cout << "((" << y << ") << 18) | (" << n_v - 1 << " << 8) | (" << k_v - 1 << " << 4) | (" << m_v - 1 << ") | (" << p_v << " << 16),\n" ;
 }
 
 void out(int mhz){
