@@ -115,7 +115,7 @@ tuple<int, int> calc_multip(float mhz) {
     } else {
 //        cout << "\nfor divf=16 the mul is non integer value!";
     }
-    return {0,0};
+    return {0,0}; 
 }
 
 void clock(uint8_t mul, uint8_t divf) {
@@ -156,7 +156,9 @@ void clock(uint8_t mul, uint8_t divf) {
     if(p == 3) p = 2;
     int p_v = p;
 
-    uint32_t pll_unlocked = (1 << 31) | ((n - 1) << 8) | ((k - 1) << 4) | (m - 1) | (p << 16);
+ //   uint32_t pll_unlocked = (1 << 31) | ((n - 1) << 8) | ((k - 1) << 4) | (m - 1) | (p << 16);
+#if defined(OC_CHOICES)
+	printf("%d,",y); 
 
 //    cout << "\n\n32bit_reg_value for write PLL=" << bitset<32>(pll_unlocked) << endl;
 //    printf("in hexadecimal write PLL = 0x%X\n",pll_unlocked);
@@ -171,7 +173,9 @@ void clock(uint8_t mul, uint8_t divf) {
 //cout << "\nk_factor=" << k_v - 1;
  //   cout << "\nm_factor=" << m_v - 1;
 //    cout << "\np_factor=" << p_v;
-    cout << "((" << y << ") << 18) | (" << n_v - 1 << " << 8) | (" << k_v - 1 << " << 4) | (" << m_v - 1 << ") | (" << p_v << " << 16),\n" ;
+#else
+	cout << "((" << y << ") << 18) | (" << n_v - 1 << " << 8) | (" << k_v - 1 << " << 4) | (" << m_v - 1 << ") | (" << p_v << " << 16),\n" ;
+#endif
 }
 
 void out(int mhz){
