@@ -8,23 +8,30 @@ using namespace std;
 tuple<int, int> calc_multip(float mhz) {
     float mul ;
 //  mhz = 864;
+#if !defined(OC_TABLE) && !defined(OC_CHOICES)
     cout << "\nif clock is=" << mhz << "MHz";
+#endif
     int d[]={1,2,3,4,6,8,12,16};
     for (int i=0;i<8;i++){
     	mul = mhz / 24 * d[i] ;
     	if (mul == (int)mul) {
         	int m = (int)mul;
         	if ( (m <= 32 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
+#if !defined(OC_TABLE) && !defined(OC_CHOICES)
        	    cout << "\nfor divf=" << d[i] << " the mul=" << m;
+#endif
         	return {m, d[i]};
-        	} else {
+        	} 
+#if !defined(OC_TABLE) && !defined(OC_CHOICES)
+			else {
      	    cout << "\nfor divf=" << d[i] << " there is no mul";
         	}
+
     	} else {
           	cout << "\nfor divf=" << d[i] << " the mul is non integer value!";
+#endif
     	}
     }
-    cout << endl;	
     return {0,0};
 }
 
@@ -66,6 +73,11 @@ void clock(uint8_t mul, uint8_t divf) {
     if(p == 3) p = 2;
     int p_v = p;
 
+#if defined(OC_CHOICES)
+	printf("%d,",y);
+#elif defined(OC_TABLE)
+	cout << "((" << y << ") << 18) | (" << n_v - 1 << " << 8) | (" << k_v - 1 << " << 4) | (" << m_v - 1 << ") | (" << p_v << " << 16),\n" ;
+#else
     uint32_t pll_unlocked = (1 << 31) | ((n - 1) << 8) | ((k - 1) << 4) | (m - 1) | (p << 16);
 
     cout << "\n\n32bit_reg_value for write PLL=" << bitset<32>(pll_unlocked) << endl;
@@ -82,20 +94,24 @@ void clock(uint8_t mul, uint8_t divf) {
     cout << "\nm_factor=" << m_v - 1;
     cout << "\np_factor=" << p_v;
     cout << "\n\noc_table[] string:\n((" << y << ") << 18) | (" << n_v - 1 << " << 8) | (" << k_v - 1 << " << 4) | (" << m_v - 1 << ") | (" << p_v << " << 16) \n" ;
+#endif
+}
+
+void out(int mhz){
+#if !defined(OC_TABLE) && !defined(OC_CHOICES)
+    int mul, divf;
+// type "mhz" value to output possible "mul,divf" values
+    cout << "Type \"mhz\":" ;
+    cin >> mhz ;
+#endif
+    auto [MUL, DIVF] = calc_multip(mhz);  
+	clock(MUL,DIVF); 
 }
 
 int main() {
-// type "mhz" value to output possible "mul,divf" values   
-    int mhz, mul, divf;
-    cout << "Type \"mhz\":" ;
-    cin >> mhz ;
-
-    auto [MUL, DIVF] = calc_multip(mhz);  
-// type "mul,divf" values to output N,K,M,P factors for oc_table[]  
-/*    cout << "\n\nType \"mul\":";
-    cin >> mul ;
-    cout << "Type \"divf\":";
-    cin >> divf ;
-*/
-	clock(MUL,DIVF); 
+    int i;
+#if defined(OC_TABLE) || defined(OC_CHOICES)
+    for (i=200; i <= 1023; i++) 
+#endif
+    out(i);
 }

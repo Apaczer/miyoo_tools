@@ -8,6 +8,8 @@ Program to calculate possible CPU output PLL registers.
 ```
 gcc -o clock clock.cpp -lstdc++
 ```
+add ``-DOC_TABLE`` (to print bitsets in table form)
+add ``-DOC_CHOICES`` (to print valid decimal PLL output values)
 
 * **usage:**  
 run ``./clock.exe`` app in terminal
