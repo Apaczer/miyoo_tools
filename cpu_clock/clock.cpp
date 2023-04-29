@@ -7,115 +7,25 @@ using namespace std;
 
 tuple<int, int> calc_multip(float mhz) {
     float mul ;
-    int d ;
 //  mhz = 864;
     cout << "\nif clock is=" << mhz << "MHz";
-    mul = mhz / 24 ;
-    if (mul == (int)mul) {
-        int m = (int)mul;
-        d = 1;
-        if ( (m <= 32 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
-        cout << "\nfor divf=1 the mul=" << m;
-        return {m, d};
-        } else {
-        cout << "\nfor divf=1 there is no mul";
-        }
-    } else {
-        cout << "\nfor divf=1 the mul is non integer value!";
+    int d[]={1,2,3,4,6,8,12,16};
+    for (int i=0;i<8;i++){
+    	mul = mhz / 24 * d[i] ;
+    	if (mul == (int)mul) {
+        	int m = (int)mul;
+        	if ( (m <= 32 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
+       	    cout << "\nfor divf=" << d[i] << " the mul=" << m;
+        	return {m, d[i]};
+        	} else {
+     	    cout << "\nfor divf=" << d[i] << " there is no mul";
+        	}
+    	} else {
+          	cout << "\nfor divf=" << d[i] << " the mul is non integer value!";
+    	}
     }
-    mul = mhz / 24 * 2;
-    if (mul == (int)mul) {
-        int m = (int)mul;
-        d = 2;
-        if ( (m <= 32 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
-        cout << "\nfor divf=2 the mul=" << m;
-        return {m, d};
-        } else {
-        cout << "\nfor divf=2 there is no mul";
-        }
-    } else {
-        cout << "\nfor divf=2 the mul is non integer value!";
-    }
-    mul = mhz / 24 * 3;
-    if (mul == (int)mul) {
-        int m = (int)mul;
-        d = 3;
-        if ( (m <= 32 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
-        cout << "\nfor divf=3 the mul=" << m;
-        return {m, d};
-        } else {
-        cout << "\nfor divf=3 there is no mul";
-        }
-    } else {
-        cout << "\nfor divf=3 the mul is non integer value!";
-    }
-    mul = mhz / 24 * 4;
-    if (mul == (int)mul) {
-        int m = (int)mul;
-        d = 4;
-        if ( (m <= 32 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
-        cout << "\nfor divf=4 the mul=" << m;
-        return {m, d};
-        } else {
-        cout << "\nfor divf=4 there is no mul";
-        }
-    } else {
-        cout << "\nfor divf=4 the mul is non integer value!";
-    }
-    mul = mhz / 24 * 6;
-    if (mul == (int)mul) {
-        int m = (int)mul;
-        d = 6;
-        if ( (m <= 32 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
-        cout << "\nfor divf=6 the mul=" << m;
-        return {m, d};
-        } else {
-        cout << "\nfor divf=6 there is no mul";
-        }
-    } else {
-        cout << "\nfor divf=6 the mul is non integer value!";
-    }
-    mul = mhz / 24 * 8;
-    if (mul == (int)mul) {
-        int m = (int)mul;
-        d = 8;
-        if ( (m <= 32 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
-        cout << "\nfor divf=8 the mul=" << m;
-        return {m, d};
-        } else {
-        cout << "\nfor divf=8 there is no mul";
-        }
-    } else {
-        cout << "\nfor divf=8 the mul is non integer value!";
-    }
-    mul = mhz / 24 * 12;
-    if (mul == (int)mul) {
-        int m = (int)mul;
-        d = 12;
-        if ( (m <= 32 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
-        cout << "\nfor divf=12 the mul=" << m;
-        return {m, d};
-        } else {
-        cout << "\nfor divf=12 there is no mul";
-        }
-    } else {
-        cout << "\nfor divf=12 the mul is non integer value!";
-    }
-    mul = mhz / 24 * 16;
-    if (mul == (int)mul) {
-        int m = (int)mul;
-        d = 16;
-        if ( (m <= 32 ) || (((m > 32) && (!(m % 2) || !(m % 3) || !(m % 4))) && (m <= 128))) {
-        cout << "\nfor divf=16 the mul=" << m;
-        return {m, d};
-        } else {
-        cout << "\nfor divf=16 there is no mul";
-        exit(0) ;
-        }
-    } else {
-        cout << "\nfor divf=16 the mul is non integer value!";
-        exit(0) ;
-    }
+    cout << endl;	
+    return {0,0};
 }
 
 void clock(uint8_t mul, uint8_t divf) {
