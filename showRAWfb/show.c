@@ -10,7 +10,7 @@ int main(int argc, char** argv)
     SDL_Surface* screen=NULL;
 
     if(argc != 2){
-        printf("usage:\n\tshow_320x240 xxx\n");
+        printf("usage:\n\tshowRAWfb image_name.raw\n");
         return -1;
     }
  
