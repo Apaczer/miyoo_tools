@@ -69,7 +69,7 @@ void clock(uint8_t mul, uint8_t divf) {
 #if defined(OC_CHOICES)
 	printf("%d,",y);
 #elif defined(OC_TABLE)
-	cout << "((" << y << ") << 18) | (" << n_v - 1 << " << 8) | (" << k_v - 1 << " << 4) | (" << m_v - 1 << ")\n" ;
+	cout << "((" << y / 2 << ") << 18) | (" << n_v - 1 << " << 8) | (" << k_v - 1 << " << 4) | (" << m_v - 1 << ")\n" ;
 #else
     uint32_t pll_unlocked = (1 << 31) | ((n - 1) << 8) | ((k - 1) << 4) | (m - 1);
 
@@ -86,7 +86,7 @@ void clock(uint8_t mul, uint8_t divf) {
     cout << "\nk_factor=" << k_v - 1;
     cout << "\nm_factor=" << m_v - 1;
 //  cout << "\np_factor=" << p_v;
-    cout << "\n\noc_table[] string:\n((" << y << ") << 18) | (" << n_v - 1 << " << 8) | (" << k_v - 1 << " << 4) | (" << m_v - 1 << ")" ;
+    cout << "\n\noc_table[] string:\n((" << y / 2 << ") << 18) | (" << n_v - 1 << " << 8) | (" << k_v - 1 << " << 4) | (" << m_v - 1 << ")" ;
 #endif
 }
 
@@ -97,6 +97,7 @@ void out(int mhz){
     cout << "Type \"mhz\":" ;
     cin >> mhz ;
 #endif
+    mhz = mhz * 2; // the output value must the DOUBLE of total input DATA RATE
     auto [MUL, DIVF] = calc_multip(mhz);  
 	clock(MUL,DIVF); 
 }
