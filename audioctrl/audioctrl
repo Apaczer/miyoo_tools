@@ -1,0 +1,10 @@
+#!/bin/sh
+
+if test -e /mnt/.asoundrc > /dev/null; then
+	rm /mnt/.asoundrc
+	alsactl init
+else
+#WARNING: This disables audio output to speakers by redirecting to false alsa card
+	echo 'pcm.!default { type plug slave.pcm "hw:1,0" }' > /mnt/.asoundrc
+	alsactl init
+fi
