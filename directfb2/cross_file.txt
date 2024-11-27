@@ -1,0 +1,15 @@
+[host_machine]
+system = 'linux'
+cpu_family = 'arm'
+cpu = 'f1c100s'
+endian = 'little'
+
+[binaries]
+c = '/opt/miyoo/usr/bin/arm-linux-gcc'
+cpp = 'arm-linux-g++'
+pkgconfig = '/opt/miyoo/usr/bin/pkg-config'
+cmake = '/usr/bin/cmake'
+
+[properties]
+needs_exe_wrapper = true
+
