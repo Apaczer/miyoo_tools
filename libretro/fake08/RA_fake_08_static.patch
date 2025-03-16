@@ -1,0 +1,256 @@
+diff --git a/Makefile.miyoo b/Makefile.miyoo
+index 2880af10ad..089a2b3341 100644
+--- a/Makefile.miyoo
++++ b/Makefile.miyoo
+@@ -26,11 +26,11 @@ else
+ STRIP                 = $(TOOLCHAIN_DIR)/usr/bin/arm-linux-strip
+ endif
+ 
+-GCW0_SDL_CONFIG      ?= $(TOOLCHAIN_DIR)/usr/arm-miyoo-linux-uclibcgnueabi/sysroot/usr/bin/sdl-config
+-GCW0_FREETYPE_CONFIG ?= $(TOOLCHAIN_DIR)/usr/arm-miyoo-linux-uclibcgnueabi/sysroot/usr/bin/freetype-config
++GCW0_SDL_CONFIG      ?= $(TOOLCHAIN_DIR)/usr/arm-miyoo-linux-musleabi/sysroot/usr/bin/sdl-config
++GCW0_FREETYPE_CONFIG ?= $(TOOLCHAIN_DIR)/usr/arm-miyoo-linux-musleabi/sysroot/usr/bin/freetype-config
+ 
+-GCW0_INC_DIR         ?= $(TOOLCHAIN_DIR)/usr/arm-miyoo-linux-uclibcgnueabi/sysroot/usr/include
+-GCW0_LIB_DIR         ?= $(TOOLCHAIN_DIR)/usr/arm-miyoo-linux-uclibcgnueabi/sysroot/usr/lib
++GCW0_INC_DIR         ?= $(TOOLCHAIN_DIR)/usr/arm-miyoo-linux-musleabi/sysroot/usr/include
++GCW0_LIB_DIR         ?= $(TOOLCHAIN_DIR)/usr/arm-miyoo-linux-musleabi/sysroot/usr/lib
+ 
+ #########################
+ #########################
+@@ -60,7 +60,7 @@ HAVE_CHD = 1
+ HAVE_COMMAND = 0
+ HAVE_CXX = 1
+ HAVE_DR_MP3 = 1
+-HAVE_DYNAMIC = 1
++HAVE_DYNAMIC = 0
+ HAVE_EGL = 0
+ HAVE_FREETYPE = 0
+ HAVE_GDI = 1
+@@ -121,18 +121,18 @@ LINK := $(CXX)
+ DEF_FLAGS := -march=armv5te -mtune=arm926ej-s -ffast-math -fomit-frame-pointer
+ DEF_FLAGS += -ffunction-sections -fdata-sections
+ DEF_FLAGS += -I. -Ideps -Ideps/stb -DMIYOO=1 -DDINGUX -MMD
+-DEF_FLAGS += -Wall -Wno-unused-variable -flto
++DEF_FLAGS += -Wall -Wno-unused-variable
+ DEF_FLAGS += -std=gnu99 -D_GNU_SOURCE
+ LIBS := -ldl -lz -lrt -pthread -lasound
+ CFLAGS :=
+ CXXFLAGS := -fno-exceptions -fno-rtti -std=c++11 -D__STDC_CONSTANT_MACROS
+ ASFLAGS :=
+-LDFLAGS := -Wl,--gc-sections
++LDFLAGS := -Wl,--gc-sections -Wl,-Bstatic ./fake08_libretro.a -Wl,-Bdynamic
+ INCLUDE_DIRS = -I$(GCW0_INC_DIR)
+ LIBRARY_DIRS = -L$(GCW0_LIB_DIR)
+ DEFINES := -DRARCH_INTERNAL -D_FILE_OFFSET_BITS=64 -UHAVE_STATIC_DUMMY
+ DEFINES += -DHAVE_C99=1 -DHAVE_CXX=1
+-DEFINES += -DHAVE_GETOPT_LONG=1 -DHAVE_STRCASESTR=1 -DHAVE_DYNAMIC=1
++DEFINES += -DHAVE_GETOPT_LONG=1 -DHAVE_STRCASESTR=1
+ DEFINES += -DHAVE_FILTERS_BUILTIN -DHAVE_ALSA
+ 
+ SDL_DINGUX_CFLAGS := $(shell $(GCW0_SDL_CONFIG) --cflags)
+diff --git a/command.c b/command.c
+index 89230d7ec7..d3c76c4180 100644
+--- a/command.c
++++ b/command.c
+@@ -690,10 +690,10 @@ bool command_show_osd_msg(command_t *cmd, const char* arg)
+ 
+ bool command_load_state_slot(command_t *cmd, const char *arg)
+ {
+-   char state_path[16384];
++   char state_path[16384] = "/mnt/.retroarch/states/fake-08";
+    char reply[128]              = "";
+    unsigned int slot            = (unsigned int)strtoul(arg, NULL, 10);
+-   bool savestates_enabled      = core_info_current_supports_savestate();
++   bool savestates_enabled      = true;
+    bool ret                     = false;
+    state_path[0]                = '\0';
+    snprintf(reply, sizeof(reply) - 1, "LOAD_STATE_SLOT %d", slot);
+@@ -703,7 +703,6 @@ bool command_load_state_slot(command_t *cmd, const char *arg)
+       runloop_get_savestate_path(state_path, sizeof(state_path), slot);
+ 
+       info_size          = core_serialize_size();
+-      savestates_enabled = (info_size > 0);
+    }
+    if (savestates_enabled)
+    {
+@@ -720,10 +719,10 @@ bool command_load_state_slot(command_t *cmd, const char *arg)
+ bool command_play_replay_slot(command_t *cmd, const char *arg)
+ {
+ #ifdef HAVE_BSV_MOVIE
+-   char replay_path[16384];
++   char replay_path[16384] = "/mnt/.retroarch/states/fake-08";
+    char reply[128]              = "";
+    unsigned int slot            = (unsigned int)strtoul(arg, NULL, 10);
+-   bool savestates_enabled      = core_info_current_supports_savestate();
++   bool savestates_enabled      = true;
+    bool ret                     = false;
+    replay_path[0]               = '\0';
+    if (savestates_enabled)
+@@ -732,7 +731,6 @@ bool command_play_replay_slot(command_t *cmd, const char *arg)
+       runloop_get_replay_path(replay_path, sizeof(replay_path), slot);
+ 
+       info_size          = core_serialize_size();
+-      savestates_enabled = (info_size > 0);
+    }
+    if (savestates_enabled)
+    {
+@@ -1281,8 +1279,6 @@ bool command_event_save_auto_state(void)
+ 
+    if (runloop_st->entry_state_slot)
+       return false;
+-   if (!core_info_current_supports_savestate())
+-      return false;
+    if (string_is_empty(path_basename(path_get(RARCH_PATH_BASENAME))))
+       return false;
+ 
+@@ -1339,8 +1335,6 @@ bool command_event_load_entry_state(settings_t *settings)
+    runloop_state_t *runloop_st     = runloop_state_get_ptr();
+    bool ret                        = false;
+ 
+-   if (!core_info_current_supports_savestate())
+-      return false;
+ 
+ #ifdef HAVE_CHEEVOS
+    if (rcheevos_hardcore_active())
+@@ -1386,8 +1380,6 @@ void command_event_load_auto_state(void)
+    char savestate_name_auto[PATH_MAX_LENGTH];
+    runloop_state_t *runloop_st     = runloop_state_get_ptr();
+ 
+-   if (!core_info_current_supports_savestate())
+-      return;
+ 
+ #ifdef HAVE_CHEEVOS
+    if (rcheevos_hardcore_active())
+@@ -2077,9 +2069,9 @@ void command_event_remove_current_config(enum override_type type)
+ bool command_event_main_state(unsigned cmd)
+ {
+    char msg[128];
+-   char state_path[16384];
++   char state_path[16384] = "/mnt/.retroarch/states/fake-08";
+    settings_t *settings        = config_get_ptr();
+-   bool savestates_enabled     = core_info_current_supports_savestate();
++   bool savestates_enabled     = true;
+    bool ret                    = false;
+    bool push_msg               = true;
+ 
+@@ -2092,7 +2084,6 @@ bool command_event_main_state(unsigned cmd)
+             sizeof(state_path));
+ 
+       info_size          = core_serialize_size();
+-      savestates_enabled = (info_size > 0);
+    }
+ 
+   /* TODO: Load state should act in one of three ways:
+diff --git a/menu/menu_displaylist.c b/menu/menu_displaylist.c
+index b5a26096ba..943ca73aa8 100644
+--- a/menu/menu_displaylist.c
++++ b/menu/menu_displaylist.c
+@@ -3556,7 +3556,7 @@ static int menu_displaylist_parse_load_content_settings(
+ #endif
+       bool quickmenu_show_resume_content  = settings->bools.quick_menu_show_resume_content;
+       bool quickmenu_show_restart_content = settings->bools.quick_menu_show_restart_content;
+-      bool savestates_enabled             = core_info_current_supports_savestate();
++      bool savestates_enabled             = true;
+       rarch_system_info_t *sys_info       = &runloop_state_get_ptr()->system;
+ 
+       if (quickmenu_show_resume_content)
+@@ -13804,7 +13804,7 @@ bool menu_displaylist_ctl(enum menu_displaylist_ctl_state type,
+             break;
+          case DISPLAYLIST_SAVESTATE_LIST:
+             {
+-               bool savestates_enabled = core_info_current_supports_savestate();
++               bool savestates_enabled = true; 
+ 
+                menu_entries_clear(info->list);
+ 
+diff --git a/tasks/task_save.c b/tasks/task_save.c
+index 27fc6c3b94..3a37e3f071 100644
+--- a/tasks/task_save.c
++++ b/tasks/task_save.c
+@@ -164,12 +164,6 @@ bool content_undo_load_state(void)
+    struct sram_block *blocks = NULL;
+    struct string_list *savefile_list = (struct string_list*)savefile_ptr_get();
+ 
+-   if (!core_info_current_supports_savestate())
+-   {
+-      RARCH_LOG("[State]: %s\n",
+-            msg_hash_to_str(MSG_CORE_DOES_NOT_SUPPORT_SAVESTATES));
+-      return false;
+-   }
+ 
+    RARCH_LOG("[State]: %s \"%s\", %u %s.\n",
+          msg_hash_to_str(MSG_LOADING_STATE),
+@@ -671,7 +665,6 @@ error:
+  **/
+ bool content_undo_save_state(void)
+ {
+-   if (core_info_current_supports_savestate())
+       return task_push_undo_save_state(
+             undo_save_buf.path,
+             undo_save_buf.data,
+@@ -1344,12 +1337,6 @@ bool content_auto_save_state(const char *path)
+    size_t serial_size;
+    intfstream_t *file = NULL;
+ 
+-   if (!core_info_current_supports_savestate())
+-   {
+-      RARCH_LOG("[State]: %s\n",
+-            msg_hash_to_str(MSG_CORE_DOES_NOT_SUPPORT_SAVESTATES));
+-      return false;
+-   }
+ 
+    serial_size = core_serialize_size();
+ 
+@@ -1415,12 +1402,6 @@ bool content_save_state(const char *path, bool save_to_disk)
+    size_t serial_size;
+    void *data  = NULL;
+ 
+-   if (!core_info_current_supports_savestate())
+-   {
+-      RARCH_LOG("[State]: %s\n",
+-            msg_hash_to_str(MSG_CORE_DOES_NOT_SUPPORT_SAVESTATES));
+-      return false;
+-   }
+ 
+    serial_size = core_serialize_size();
+ 
+@@ -1566,12 +1547,6 @@ bool content_load_state(const char *path,
+    video_driver_state_t *video_st  = video_state_get_ptr();
+    settings_t *settings            = config_get_ptr();
+ 
+-   if (!core_info_current_supports_savestate())
+-   {
+-      RARCH_LOG("[State]: %s\n",
+-            msg_hash_to_str(MSG_CORE_DOES_NOT_SUPPORT_SAVESTATES));
+-      goto error;
+-   }
+ 
+    task  = task_init();
+    state = (save_task_state_t*)calloc(1, sizeof(*state));
+@@ -1689,12 +1664,6 @@ bool content_load_state_from_ram(void)
+    bool ret        = false;
+    void* temp_data = NULL;
+ 
+-   if (!core_info_current_supports_savestate())
+-   {
+-      RARCH_LOG("[State]: %s\n",
+-            msg_hash_to_str(MSG_CORE_DOES_NOT_SUPPORT_SAVESTATES));
+-      return false;
+-   }
+ 
+    if (!ram_buf.state_buf.data)
+       return false;
+@@ -1740,12 +1709,6 @@ bool content_save_state_to_ram(void)
+    void *data  = NULL;
+    size_t serial_size;
+ 
+-   if (!core_info_current_supports_savestate())
+-   {
+-      RARCH_LOG("[State]: %s\n",
+-            msg_hash_to_str(MSG_CORE_DOES_NOT_SUPPORT_SAVESTATES));
+-      return false;
+-   }
+ 
+    serial_size = core_serialize_size();
+ 
