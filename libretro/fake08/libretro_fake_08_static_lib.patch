@@ -1,0 +1,20 @@
+diff --git a/platform/libretro/Makefile b/platform/libretro/Makefile
+index be0f1b4..3537bf8 100644
+--- a/platform/libretro/Makefile
++++ b/platform/libretro/Makefile
+@@ -1,4 +1,4 @@
+-STATIC_LINKING := 0
++STATIC_LINKING := 1
+ AR             := ar
+ 
+ ifneq ($(V),1)
+@@ -72,7 +72,8 @@ ifeq ($(platform), unix)
+ 	EXT ?= so
+    TARGET := $(TARGET_NAME)_libretro.$(EXT)
+    fpic := -fPIC
+-   SHARED := -shared -Wl,--version-script=link.T -Wl,--no-undefined
++  #SHARED := -shared -Wl,--version-script=link.T -Wl,--no-undefined
++   CFLAGS += -D_NEED_FULL_PATH_
+ else ifeq ($(platform), linux-portable)
+    TARGET := $(TARGET_NAME)_libretro.$(EXT)
+    fpic := -fPIC -nostdlib
