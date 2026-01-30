@@ -1,0 +1,33 @@
+#!/bin/busybox sh
+
+export HOME=/mnt
+export ROMS=/roms
+export BOOTDIR=/boot # we expect /dev/mmcblk0p1 has been mounted here read only, from inittab
+export SDL_NOMOUSE=1
+export OPTIONS_CFG="${BOOTDIR}/options.cfg"
+
+
+
+
+	# video module built-in
+
+	# sound module built-in
+
+	# load usb modules & gadget
+	if ! (grep -sq USB_OTG\=\0 "${OPTIONS_CFG}"); then
+		if test -r "${HOME}/.usbmode"; then
+			. ${HOME}/.usbmode
+		else
+			USB_MODE="mtp" # default setup
+		fi
+		echo "Loading USB ${USB_MODE} default gadget"
+		usb-mode ${USB_MODE} >> /dev/null 2>&1
+		export USB_MODE
+	fi
+
+	export TVOUT="OFF"
+
+	daemon >> /dev/null 2>&1
+
+	cd "${HOME}"/gmenu2x || { echo "Failed to cd into ${HOME}/gmenu2x" ; exit; }
+		./gmenu2x >> /dev/null 2>&1
