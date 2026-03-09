@@ -94,11 +94,10 @@ echo -e "\n*****************************************************"
 echo -e "*******************   RETROARCH   *******************"
 echo -e "*****************************************************\n\n"
 
-ScraperConfigFile=$HOME/scraper.json
-config=$(cat $ScraperConfigFile)
-MediaType=$(echo "$config" | jq -r '.RetroarchMediaType')
+ScraperConfigFile=$HOME/scraper.cfg
+config=$ScraperConfigFile
+MediaType="$(sed -n 's:^RetroarchMediaType = ::p' "${config}" | tr -d '"')"
 if [ -z "$MediaType" ]; then
-	ssMediaType=$(echo "$config" | jq -r '.ScreenscraperMediaType')
     echo -e " The currently selected media ($ssMediaType)\n is not compatible with Retroarch scraper.\n\n\n\n\n\n\n\n\n\n\n\n Exiting."
 	sleep 5
 	exit
