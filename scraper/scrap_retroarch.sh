@@ -94,9 +94,8 @@ echo -e "\n*****************************************************"
 echo -e "*******************   RETROARCH   *******************"
 echo -e "*****************************************************\n\n"
 
-ScraperConfigFile=$HOME/scraper.cfg
-config=$ScraperConfigFile
-MediaType="$(sed -n 's:^RetroarchMediaType = ::p' "${config}" | tr -d '"')"
+#MediaType="$(sed -n 's:^RetroarchMediaType = ::p' "${config}" | tr -d '"')"
+MediaType="Named_Boxarts"
 if [ -z "$MediaType" ]; then
     echo -e " The currently selected media ($ssMediaType)\n is not compatible with Retroarch scraper.\n\n\n\n\n\n\n\n\n\n\n\n Exiting."
 	sleep 5
