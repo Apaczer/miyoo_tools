@@ -26,7 +26,6 @@ Scrap_notrequired=0
 CurrentSystem=$1
 CurrentRom="$2"
 
-
 get_ra_alias(){
 	# find the corresponding remoteSystem for Retroarch scraping
 case $1 in
