@@ -157,7 +157,7 @@ for file in $(eval "find $HOME/roms/$CurrentSystem -maxdepth 2 -type f \
     	    WgetResult=$?
     
     	    if [ $WgetResult = 0 ] ; then
-            	wget -q  "http://thumbnails.libretro.com/$remoteSystemNoSpace/${MediaType}/$romNameNoExtensionNoSpace.png" -P "$HOME/roms/$CurrentSystem/.images" -O "$romNameNoExtension.png"
+            	wget -q  "http://thumbnails.libretro.com/$remoteSystemNoSpace/${MediaType}/$romNameNoExtensionNoSpace.png" -O "$HOME/roms/$CurrentSystem/.images/$romNameNoExtension.png"
 
             	# resizing :
             	#magick "$HOME/roms/$CurrentSystem/.images/$romNameNoExtension.png" -resize 250x360 "$HOME/roms/$CurrentSystem/.images/$romNameNoExtension-resized.png"
