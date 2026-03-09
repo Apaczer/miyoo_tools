@@ -7,13 +7,6 @@ then
   exit
 fi
 
-sysdir=/mnt/SDCARD/.tmp_update
-PATH="$sysdir/bin:$PATH"
-LD_LIBRARY_PATH="/mnt/SDCARD/.tmp_update/lib:$sysdir/lib/parasyte:$LD_LIBRARY_PATH"
-
-echo performance > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-#$sysdir/bin/freemma > /dev/null
-
 NONE='\033[00m'
 RED='\033[01;31m'
 GREEN='\033[01;32m'
@@ -95,14 +88,13 @@ esac
 
 #Retroarch system folder name
 get_ra_alias $CurrentSystem
- #ls /mnt/SDCARD/Roms/$CurrentSystem
-mkdir -p /mnt/SDCARD/Roms/$CurrentSystem/Imgs &> /dev/null
+mkdir -p $HOME/roms/$CurrentSystem/.images &> /dev/null
 clear
 echo -e "\n*****************************************************"
 echo -e "*******************   RETROARCH   *******************"
 echo -e "*****************************************************\n\n"
 
-ScraperConfigFile=/mnt/SDCARD/.tmp_update/config/scraper.json
+ScraperConfigFile=$HOME/scraper.json
 config=$(cat $ScraperConfigFile)
 MediaType=$(echo "$config" | jq -r '.RetroarchMediaType')
 if [ -z "$MediaType" ]; then
@@ -133,10 +125,10 @@ if ! [ -z "$CurrentRom" ]; then
     
 fi
 
-#eval echo "find /mnt/SDCARD/Roms/$CurrentSystem -maxdepth 2 -type f ! -name '.*' ! -name '*.xml' ! -name '*.db' ! -path '*/Imgs/*' ! -path '*/.*/*' $romfilter"      # for debugging
-for file in $(eval "find /mnt/SDCARD/Roms/$CurrentSystem -maxdepth 2 -type f \
+#eval echo "find $HOME/roms/$CurrentSystem -maxdepth 2 -type f ! -name '.*' ! -name '*.xml' ! -name '*.db' ! -path '*/.images/*' ! -path '*/.*/*' $romfilter"      # for debugging
+for file in $(eval "find $HOME/roms/$CurrentSystem -maxdepth 2 -type f \
 	! -name '.*' ! -name '*.xml' ! -name '*.miyoocmd' ! -name '*.cfg' ! -name '*.db' \
-	! -path '*/Imgs/*' ! -path '*/.*/*' $romfilter"); do
+	! -path '*/.images/*' ! -path '*/.*/*' $romfilter"); do
 	
     echo "-------------------------------------------------"
     let romcount++;
@@ -156,7 +148,7 @@ for file in $(eval "find /mnt/SDCARD/Roms/$CurrentSystem -maxdepth 2 -type f \
     
     if [ $startcapture == true ]; then
     		
-    	FILE=/mnt/SDCARD/Roms/$CurrentSystem/Imgs/$romNameNoExtension.png
+    	FILE=$HOME/roms/$CurrentSystem/.images/$romNameNoExtension.png
     	if [ -f "$FILE" ]; then
     		echo -e "${YELLOW}already Scraped !${NONE}"
     		let Scrap_notrequired++;
@@ -165,12 +157,13 @@ for file in $(eval "find /mnt/SDCARD/Roms/$CurrentSystem -maxdepth 2 -type f \
     	    WgetResult=$?
     
     	    if [ $WgetResult = 0 ] ; then
-            	wget -q  "http://thumbnails.libretro.com/$remoteSystemNoSpace/${MediaType}/$romNameNoExtensionNoSpace.png" -P "/mnt/SDCARD/Roms/$CurrentSystem/Imgs" -O "$romNameNoExtension.png"
+            	wget -q  "http://thumbnails.libretro.com/$remoteSystemNoSpace/${MediaType}/$romNameNoExtensionNoSpace.png" -P "$HOME/roms/$CurrentSystem/.images" -O "$romNameNoExtension.png"
 
             	# resizing :
-            	#magick "/mnt/SDCARD/Roms/$CurrentSystem/Imgs/$romNameNoExtension.png" -resize 250x360 "/mnt/SDCARD/Roms/$CurrentSystem/Imgs/$romNameNoExtension-resized.png"
-                #mv "/mnt/SDCARD/Roms/$CurrentSystem/Imgs/$romNameNoExtension-resized.png"  "/mnt/SDCARD/Roms/$CurrentSystem/Imgs/$romNameNoExtension.png"
-                pngScale "/mnt/SDCARD/Roms/$CurrentSystem/Imgs/$romNameNoExtension.png" "/mnt/SDCARD/Roms/$CurrentSystem/Imgs/$romNameNoExtension.png"
+            	#magick "$HOME/roms/$CurrentSystem/.images/$romNameNoExtension.png" -resize 250x360 "$HOME/roms/$CurrentSystem/.images/$romNameNoExtension-resized.png"
+                #mv "$HOME/roms/$CurrentSystem/.images/$romNameNoExtension-resized.png"  "$HOME/roms/$CurrentSystem/.images/$romNameNoExtension.png"
+                
+				#pngScale "$HOME/roms/$CurrentSystem/.images/$romNameNoExtension.png" "$HOME/roms/$CurrentSystem/.images/$romNameNoExtension.png"
 
             	echo -e "${GREEN}Scraped!${NONE}"
             	let Scrap_Success++;
@@ -193,6 +186,3 @@ echo "Failed or not found  : $Scrap_Fail"
 echo -e "--------------------------\n"
 sleep 2
 echo "**********   Retroarch scraping finished   **********"
-
-echo ondemand > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-
