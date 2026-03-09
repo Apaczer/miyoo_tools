@@ -131,7 +131,7 @@ for file in $(eval "find $HOME/roms/$CurrentSystem -maxdepth 2 -type f \
 	! -path '*/.images/*' ! -path '*/.*/*' $romfilter"); do
 	
     echo "-------------------------------------------------"
-    let romcount++;
+    romcount=$((romcount + 1))
     
     # Cleaning up names
     romName=$(basename "$file")
@@ -146,12 +146,12 @@ for file in $(eval "find $HOME/roms/$CurrentSystem -maxdepth 2 -type f \
     startcapture=true
      
     
-    if [ $startcapture == true ]; then
+    if [ $startcapture = true ]; then
     		
     	FILE=$HOME/roms/$CurrentSystem/.images/$romNameNoExtension.png
     	if [ -f "$FILE" ]; then
     		echo -e "${YELLOW}already Scraped !${NONE}"
-    		let Scrap_notrequired++;
+			Scrap_notrequired=$((Scrap_notrequired + 1))
     	else
     	    wget -q --spider "http://thumbnails.libretro.com/$remoteSystemNoSpace/${MediaType}/$romNameNoExtensionNoSpace.png" 2>&1
     	    WgetResult=$?
@@ -166,10 +166,10 @@ for file in $(eval "find $HOME/roms/$CurrentSystem -maxdepth 2 -type f \
 				#pngScale "$HOME/roms/$CurrentSystem/.images/$romNameNoExtension.png" "$HOME/roms/$CurrentSystem/.images/$romNameNoExtension.png"
 
             	echo -e "${GREEN}Scraped!${NONE}"
-            	let Scrap_Success++;
+            	Scrap_Success=$((Scrap_Success + 1));
     		else
     		    echo -e "${RED}No match found${NONE}"
-    		    let Scrap_Fail++;
+    		    Scrap_Fail=$((Scrap_Fail + 1));
     		fi
     	fi
     
