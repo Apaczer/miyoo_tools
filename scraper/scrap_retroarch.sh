@@ -1,6 +1,11 @@
 #!/bin/sh
 #echo $0 $*    # for debugging
 
+## Externel variables
+# current_system=${1}
+# current_rom="${2}"
+# ss_media_type="${ss_media_type}"
+
 if [ -z "$1" ]
 then
   echo -e "\nusage : scrap_retroarch.sh emu_folder_name [rom_name]\nexample : scrap_retroarch SFC\n"
@@ -19,12 +24,12 @@ UNDERLINE='\033[4m'
 BLINK='\x1b[5m'
 
 romcount=0
-Scrap_Success=0
-Scrap_Fail=0
-Scrap_notrequired=0
+scrap_success=0
+scrap_fail=0
+scrap_notrequired=0
 
-CurrentSystem=$1
-CurrentRom="$2"
+current_system=$1
+current_rom="$2"
 
 get_ra_alias(){
 	# find the corresponding remoteSystem for Retroarch scraping
@@ -86,22 +91,22 @@ esac
 
 
 #Retroarch system folder name
-get_ra_alias $CurrentSystem
-mkdir -p $HOME/roms/$CurrentSystem/.images &> /dev/null
+get_ra_alias $current_system
+mkdir -p $HOME/roms/$current_system/.images &> /dev/null
 clear
 echo -e "\n*****************************************************"
 echo -e "*******************   RETROARCH   *******************"
 echo -e "*****************************************************\n\n"
 
-#MediaType="$(sed -n 's:^RetroarchMediaType = ::p' "${config}" | tr -d '"')"
-MediaType="Named_Boxarts"
-if [ -z "$MediaType" ]; then
-    echo -e " The currently selected media ($ssMediaType)\n is not compatible with Retroarch scraper.\n\n\n\n\n\n\n\n\n\n\n\n Exiting."
+#media_type="$(sed -n 's:^Retroarchmedia_type = ::p' "${config}" | tr -d '"')"
+media_type="Named_Boxarts"
+if [ -z "$media_type" ]; then
+    echo -e " The currently selected media ($ss_media_type)\n is not compatible with Retroarch scraper.\n\n\n\n\n\n\n\n\n\n\n\n Exiting."
 	sleep 5
 	exit
 fi
-echo "Media Type: $MediaType"
-echo -e "Scraping $CurrentSystem...\n"
+echo "Media Type: $media_type"
+echo -e "Scraping $current_system...\n"
 			
 			
 # =================
@@ -113,18 +118,14 @@ set -f
 
 
 #Roms loop
-if ! [ -z "$CurrentRom" ]; then
- #   CurrentRom_noapostrophe=${CurrentRom//\'/\\\'}    # replacing   '   by    \'
- #   romfilter="-name  '*$CurrentRom_noapostrophe*'"
- #   romfilter="-name  '*$CurrentRom*'"
-    romfilter="-name \"*$(echo "$CurrentRom" | sed -e 's_\[_\\\[_g' -e 's_\]_\\\]_g')*\""
-    #romfilter="-name  '*$CurrentRom*'"
-    
+if ! [ -z "$current_rom" ]; then
+    romfilter="-name \"*$(echo "$current_rom" | sed -e 's_\[_\\\[_g' -e 's_\]_\\\]_g')*\""
 fi
 
-#eval echo "find $HOME/roms/$CurrentSystem -maxdepth 2 -type f ! -name '.*' ! -name '*.xml' ! -name '*.db' ! -path '*/.images/*' ! -path '*/.*/*' $romfilter"      # for debugging
-for file in $(eval "find $HOME/roms/$CurrentSystem -maxdepth 2 -type f \
-	! -name '.*' ! -name '*.xml' ! -name '*.miyoocmd' ! -name '*.cfg' ! -name '*.db' \
+## Debug
+#eval echo "find $HOME/roms/$current_system -maxdepth 2 -type f ! -name '.*' ! -name '*.xml' ! -name '*.db' ! -path '*/.images/*' ! -path '*/.*/*' $romfilter"
+for file in $(eval "find $HOME/roms/$current_system -maxdepth 2 -type f \
+	! -name '.*' ! -name '*.xml' ! -name '*.cfg' ! -name '*.db' \
 	! -path '*/.images/*' ! -path '*/.*/*' $romfilter"); do
 	
     echo "-------------------------------------------------"
@@ -136,7 +137,8 @@ for file in $(eval "find $HOME/roms/$CurrentSystem -maxdepth 2 -type f \
     romNameNoExtensionNoSpace=$(echo $romNameNoExtension | sed 's/ /%20/g')
     
     echo $romNameNoExtension
-    #echo -e "$romNameNoExtension \n   ---- $romNameNoExtensionNoSpace"  # for debugging 
+	## Debug
+    #echo -e "$romNameNoExtension \n   ---- $romNameNoExtensionNoSpace"
     
     remoteSystemNoSpace=$(echo $remoteSystem | sed 's/ /%20/g')
     
@@ -145,28 +147,28 @@ for file in $(eval "find $HOME/roms/$CurrentSystem -maxdepth 2 -type f \
     
     if [ $startcapture = true ]; then
     		
-    	FILE=$HOME/roms/$CurrentSystem/.images/$romNameNoExtension.png
+    	FILE=$HOME/roms/$current_system/.images/$romNameNoExtension.png
     	if [ -f "$FILE" ]; then
     		echo -e "${YELLOW}already Scraped !${NONE}"
-			Scrap_notrequired=$((Scrap_notrequired + 1))
+			scrap_notrequired=$((scrap_notrequired + 1))
     	else
-    	    wget -q --spider "http://thumbnails.libretro.com/$remoteSystemNoSpace/${MediaType}/$romNameNoExtensionNoSpace.png" 2>&1
+    	    wget -q --spider "http://thumbnails.libretro.com/$remoteSystemNoSpace/${media_type}/$romNameNoExtensionNoSpace.png" 2>&1
     	    WgetResult=$?
     
     	    if [ $WgetResult = 0 ] ; then
-            	wget -q  "http://thumbnails.libretro.com/$remoteSystemNoSpace/${MediaType}/$romNameNoExtensionNoSpace.png" -O "$HOME/roms/$CurrentSystem/.images/$romNameNoExtension.png"
+            	wget -q  "http://thumbnails.libretro.com/$remoteSystemNoSpace/${media_type}/$romNameNoExtensionNoSpace.png" -O "$HOME/roms/$current_system/.images/$romNameNoExtension.png"
 
-            	# resizing :
-            	#magick "$HOME/roms/$CurrentSystem/.images/$romNameNoExtension.png" -resize 250x360 "$HOME/roms/$CurrentSystem/.images/$romNameNoExtension-resized.png"
-                #mv "$HOME/roms/$CurrentSystem/.images/$romNameNoExtension-resized.png"  "$HOME/roms/$CurrentSystem/.images/$romNameNoExtension.png"
+            	## Resizing :
+            	#magick "$HOME/roms/$current_system/.images/$romNameNoExtension.png" -resize 250x360 "$HOME/roms/$current_system/.images/$romNameNoExtension-resized.png"
+                #mv "$HOME/roms/$current_system/.images/$romNameNoExtension-resized.png"  "$HOME/roms/$current_system/.images/$romNameNoExtension.png"
                 
-				#pngScale "$HOME/roms/$CurrentSystem/.images/$romNameNoExtension.png" "$HOME/roms/$CurrentSystem/.images/$romNameNoExtension.png"
+				#pngScale "$HOME/roms/$current_system/.images/$romNameNoExtension.png" "$HOME/roms/$current_system/.images/$romNameNoExtension.png"
 
             	echo -e "${GREEN}Scraped!${NONE}"
-            	Scrap_Success=$((Scrap_Success + 1));
+            	scrap_success=$((scrap_success + 1));
     		else
     		    echo -e "${RED}No match found${NONE}"
-    		    Scrap_Fail=$((Scrap_Fail + 1));
+    		    scrap_fail=$((scrap_fail + 1));
     		fi
     	fi
     
@@ -177,9 +179,9 @@ done
 echo -e "\n--------------------------"
 echo "Total scanned roms   : $romcount"
 echo "--------------------------"
-echo "Successfully scraped : $Scrap_Success"
-echo "Alread present       : $Scrap_notrequired"
-echo "Failed or not found  : $Scrap_Fail"
+echo "Successfully scraped : $scrap_success"
+echo "Alread present       : $scrap_notrequired"
+echo "Failed or not found  : $scrap_fail"
 echo -e "--------------------------\n"
 sleep 2
 echo "**********   Retroarch scraping finished   **********"
