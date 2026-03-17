@@ -221,8 +221,8 @@ arg_format() {
 
     # overall display rule
     case "$cur" in
-	'') esc CUR 5; esc SGR '' 2 ;;
-	*) esc CUR 2; esc SGR 35 1; printf '>'; esc SGR 33 1; esc CUR 2 ;;
+	'') esc CUR 2; esc SGR '' 2 ;;
+	*) esc CUR -2; esc SGR 35 1; printf '>'; esc SGR 33 1; esc CUR 1 ;;
     esac
 
     # content display format
@@ -552,7 +552,7 @@ key() {
                 redraw "$@"
                 return 0
                 ;;
-            l?|C2|"$esc") # l / Arrow Right / Esc
+            l?|C2|"$space"?) # l / Arrow Right / Space
                 case $token in
                     '?') continue ;;
                     *)
@@ -561,6 +561,9 @@ key() {
                         ;;
                 esac
                 ;;
+            "$esc") # Esc
+                pkill -9 st
+            ;;
 
             h?|D2|"$bs_char"?) # h / Arrow Left / Backspace
                 case $token in
@@ -606,6 +609,23 @@ key() {
                                                     ;;
                                             esac
                                             ;;
+                                    esac
+                                    ;;
+                                "040") # Enter
+                                    case $cur in
+                                        'no result') continue ;;
+                                    *)
+                                        ltype="Searching..."
+                                        status_line "$last"
+                                        ltype="Search mode"
+                                        token='/'
+                                        case $# in
+                                        1) # only one result, directly output it
+                                            term_reset
+                                            return 1
+                                            ;;
+                                        esac
+                                        ;;
                                     esac
                                     ;;
                                 "$bs_char"?) # Backspace
@@ -848,6 +868,8 @@ ctrl_n=$(printf '\016')
 ctrl_p=$(printf '\020')
 ctrl_a=$(printf '\001')
 ctrl_e=$(printf '\005')
+space=$(printf '\040')
+escape=$(printf '\033')
 
 while getopts "t:b:n:d:c:f:hil" result; do
     case "${result}" in
