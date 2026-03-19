@@ -34,52 +34,7 @@ current_rom="$2"
 get_ra_alias(){
 	# find the corresponding remoteSystem for Retroarch scraping
 case $1 in
-	ATARI)               remoteSystem="Atari - 2600" ;;
-	FIFTYTWOHUNDRED)     remoteSystem="Atari - 5200" ;;
-	SEVENTYEIGHTHUNDRED) remoteSystem="Atari - 7800" ;;
-	LYNX)                remoteSystem="Atari - Lynx" ;;
-	# doom)              remoteSystem="DOOM" ;;
-	DOS)                 remoteSystem="DOS" ;;
-	FBNEO)               remoteSystem="FBNeo - Arcade Games" ;;
-	PCE)                 remoteSystem="NEC - PC Engine - TurboGrafx 16" ;;
-	PCECD)               remoteSystem="NEC - PC Engine CD - TurboGrafx-CD" ;;
-	GB)                  remoteSystem="Nintendo - Game Boy" ;;
-	GBA)                 remoteSystem="Nintendo - Game Boy Advance" ;;
-	# gbc)               remoteSystem="Nintendo - Game Boy Color" ;;
-	GBC)                 remoteSystem="Nintendo - Game Boy Color" ;;
-	# 3ds)               remoteSystem="Nintendo - Nintendo 3DS" ;;
-	# n64)               remoteSystem="Nintendo - Nintendo 64" ;;
-	NDS)                 remoteSystem="Nintendo - Nintendo DS" ;;
-	FC)                  remoteSystem="Nintendo - Nintendo Entertainment System" ;;
-	POKE)                remoteSystem="Nintendo - Pokemon Mini" ;;
-	SFC)                 remoteSystem="Nintendo - Super Nintendo Entertainment System" ;;
-	# wii)               remoteSystem="Nintendo - Wii" ;;
-	NEOGEO)              remoteSystem="SNK - Neo Geo" ;;
-	NEOCD)               remoteSystem="SNK - Neo Geo CD" ;;
-	NGP)                 remoteSystem="SNK - Neo Geo Pocket" ;;
-	NGP)                 remoteSystem="SNK - Neo Geo Pocket Color" ;;
-	SCUMMVM)             remoteSystem="ScummVM" ;;
-	THIRTYTWOX)          remoteSystem="Sega - 32X" ;;
-	VMU)                 remoteSystem="Sega - Dreamcast" ;;
-	GG)                  remoteSystem="Sega - Game Gear" ;;
-	MS)                  remoteSystem="Sega - Master System - Mark III" ;;
-	MD)                  remoteSystem="Sega - Mega Drive - Genesis" ;;
-	# genesiswide)       remoteSystem="Sega - Mega Drive - Genesis" ;;
-	SEGACD)              remoteSystem="Sega - Mega-CD - Sega CD" ;;
-	# saturn)            remoteSystem="Sega - Saturn" ;;
-	PS)                  remoteSystem="Sony - PlayStation" ;;
-	# ps2)               remoteSystem="Sony - PlayStation 2" ;;
-	# psp)               remoteSystem="Sony - PlayStation Portable" ;;
-	PANASONIC)           remoteSystem="The 3DO Company - 3DO" ;;
-	CPC)                 remoteSystem="Amstrad - CPC" ;;
-	ATARIST)             remoteSystem="Atari - ST" ;;
-	COLECO)              remoteSystem="Coleco - ColecoVision" ;;
-	INTELLIVISION)       remoteSystem="Mattel - Intellivision" ;;
-	LUTRO)               remoteSystem="Lutro" ;;
-	MSX)                 remoteSystem="Microsoft - MSX" ;;
-	TIC)                 remoteSystem="TIC-80" ;;
-	VECTREX)             remoteSystem="GCE - Vectrex" ;;
-	ZXS)                 remoteSystem="Sinclair - ZX Spectrum" ;;
+	2600)					remoteSystem="Atari - 2600" ;;
 	*)
 		echo "unknown system, exiting."
 		exit
@@ -101,7 +56,7 @@ echo -e "*****************************************************\n\n"
 #media_type="$(sed -n 's:^Retroarchmedia_type = ::p' "${config}" | tr -d '"')"
 media_type="Named_Boxarts"
 if [ -z "$media_type" ]; then
-    echo -e " The currently selected media ($ss_media_type)\n is not compatible with Retroarch scraper.\n\n\n\n\n\n\n\n\n\n\n\n Exiting."
+	echo -e " The currently selected media ($ss_media_type)\n is not compatible with Retroarch scraper.\n\n\n\n\n\n\n\n\n\n\n\n Exiting."
 	sleep 5
 	exit
 fi
@@ -119,7 +74,7 @@ set -f
 
 #Roms loop
 if ! [ -z "$current_rom" ]; then
-    romfilter="-name \"*$(echo "$current_rom" | sed -e 's_\[_\\\[_g' -e 's_\]_\\\]_g')*\""
+	romfilter="-name \"*$(echo "$current_rom" | sed -e 's_\[_\\\[_g' -e 's_\]_\\\]_g')*\""
 fi
 
 ## Debug
@@ -128,60 +83,60 @@ for file in $(eval "find $HOME/roms/$current_system -maxdepth 2 -type f \
 	! -name '.*' ! -name '*.xml' ! -name '*.cfg' ! -name '*.db' \
 	! -path '*/.images/*' ! -path '*/.*/*' $romfilter"); do
 	
-    echo "-------------------------------------------------"
-    romcount=$((romcount + 1))
-    
-    # Cleaning up names
-    romName=$(basename "$file")
-    romNameNoExtension=${romName%.*}	
-    romNameNoExtensionNoSpace=$(echo $romNameNoExtension | sed 's/ /%20/g')
-    
-    echo $romNameNoExtension
+	echo "-------------------------------------------------"
+	romcount=$((romcount + 1))
+	
+	# Cleaning up names
+	romName=$(basename "$file")
+	romNameNoExtension=${romName%.*}	
+	romNameNoExtensionNoSpace=$(echo $romNameNoExtension | sed 's/ /%20/g')
+	
+	echo $romNameNoExtension
 	## Debug
-    #echo -e "$romNameNoExtension \n   ---- $romNameNoExtensionNoSpace"
-    
-    remoteSystemNoSpace=$(echo $remoteSystem | sed 's/ /%20/g')
-    
-    startcapture=true
-     
-    
-    if [ $startcapture = true ]; then
-    		
-    	FILE=$HOME/roms/$current_system/.images/$romNameNoExtension.png
-    	if [ -f "$FILE" ]; then
-    		echo -e "${YELLOW}already Scraped !${NONE}"
+	#echo -e "$romNameNoExtension \n   ---- $romNameNoExtensionNoSpace"
+	
+	remoteSystemNoSpace=$(echo $remoteSystem | sed 's/ /%20/g')
+	
+	startcapture=true
+	 
+	
+	if [ $startcapture = true ]; then
+			
+		FILE=$HOME/roms/$current_system/.images/$romNameNoExtension.png
+		if [ -f "$FILE" ]; then
+			echo -e "${YELLOW}already Scraped !${NONE}"
 			scrap_notrequired=$((scrap_notrequired + 1))
-    	else
-    	    wget -q --spider "http://thumbnails.libretro.com/$remoteSystemNoSpace/${media_type}/$romNameNoExtensionNoSpace.png" 2>&1
-    	    WgetResult=$?
-    
-    	    if [ $WgetResult = 0 ] ; then
-            	wget -q  "http://thumbnails.libretro.com/$remoteSystemNoSpace/${media_type}/$romNameNoExtensionNoSpace.png" -O "$HOME/roms/$current_system/.images/$romNameNoExtension.png"
+		else
+			wget -q --spider "http://thumbnails.libretro.com/$remoteSystemNoSpace/${media_type}/$romNameNoExtensionNoSpace.png" 2>&1
+			WgetResult=$?
+	
+			if [ $WgetResult = 0 ] ; then
+				wget -q  "http://thumbnails.libretro.com/$remoteSystemNoSpace/${media_type}/$romNameNoExtensionNoSpace.png" -O "$HOME/roms/$current_system/.images/$romNameNoExtension.png"
 
-            	## Resizing :
-            	#magick "$HOME/roms/$current_system/.images/$romNameNoExtension.png" -resize 250x360 "$HOME/roms/$current_system/.images/$romNameNoExtension-resized.png"
-                #mv "$HOME/roms/$current_system/.images/$romNameNoExtension-resized.png"  "$HOME/roms/$current_system/.images/$romNameNoExtension.png"
-                
+				## Resizing :
+				#magick "$HOME/roms/$current_system/.images/$romNameNoExtension.png" -resize 250x360 "$HOME/roms/$current_system/.images/$romNameNoExtension-resized.png"
+				#mv "$HOME/roms/$current_system/.images/$romNameNoExtension-resized.png"  "$HOME/roms/$current_system/.images/$romNameNoExtension.png"
+				
 				#pngScale "$HOME/roms/$current_system/.images/$romNameNoExtension.png" "$HOME/roms/$current_system/.images/$romNameNoExtension.png"
 
-            	echo -e "${GREEN}Scraped!${NONE}"
-            	scrap_success=$((scrap_success + 1));
-    		else
-    		    echo -e "${RED}No match found${NONE}"
-    		    scrap_fail=$((scrap_fail + 1));
-    		fi
-    	fi
-    
-    
-    fi
+				echo -e "${GREEN}Scraped!${NONE}"
+				scrap_success=$((scrap_success + 1));
+			else
+				echo -e "${RED}No match found${NONE}"
+				scrap_fail=$((scrap_fail + 1));
+			fi
+		fi
+	
+	
+	fi
 done
 
 echo -e "\n--------------------------"
-echo "Total scanned roms   : $romcount"
+echo "Total scanned roms	: $romcount"
 echo "--------------------------"
-echo "Successfully scraped : $scrap_success"
-echo "Alread present       : $scrap_notrequired"
-echo "Failed or not found  : $scrap_fail"
+echo "Successfully scraped	: $scrap_success"
+echo "Alread present		: $scrap_notrequired"
+echo "Failed or not found	: $scrap_fail"
 echo -e "--------------------------\n"
 sleep 2
 echo "**********   Retroarch scraping finished   **********"
