@@ -33,8 +33,127 @@ current_rom="$2"
 
 get_ra_alias(){
 	# find the corresponding remoteSystem for Retroarch scraping
-case $1 in
+case $1 in # in order from rascraper
+	FBA)					remoteSystem="FBNeo_-_Arcade_Games" ;; # ARCADE
+	MAME)					remoteSystem="MAME" ;; # ARCADE
+	NEOGEO)					remoteSystem="SNK_-_Neo_Geo" ;; # ARCADE
+	CPC)					remoteSystem="Amstrad_-_CPC" ;;
+	CPC)					remoteSystem="Amstrad_-_GX4000" ;;
+	ARDUBOY)				remoteSystem="Arduboy_Inc_-_Arduboy" ;;
+	800)					remoteSystem="Atari - 8-bit Family" ;;
 	2600)					remoteSystem="Atari - 2600" ;;
+	5200)					remoteSystem="Atari - 5200" ;;
+	7800)					remoteSystem="Atari - 7800" ;;
+	#Atari Jaguar
+	LYNX)					remoteSystem="Atari - Lynx" ;;
+	ST)						remoteSystem="Atari - ST" ;;
+	#Atomiswave
+	WSWAN)					remoteSystem="Bandai_-_WonderSwan" ;;
+	WSWAN)					remoteSystem="Bandai_-_WonderSwan_Color" ;;
+	#CHIP-8 - no remoteSystem=""
+	MSX)					remoteSystem="Casio_-_Loopy" ;;
+	#Casio PV-1000
+	#Cave Story - single purpouse game
+	CHAILOVE)				remoteSystem="ChaiLove" ;;
+	#Cannonball - single purpouse game
+	COLECOVISION)			remoteSystem="Coleco_-_ColecoVision" ;;
+	C64)					remoteSystem="Commodore_-_64" ;;
+	AMIGA)					remoteSystem="Commodore_-_Amiga" ;;
+	#Commodore CD32
+	#Commodore CDTV
+	#Commodore PET
+	#Commodore Plus-4
+	#Commodore VIC-20
+	DOOM)					remoteSystem="DOOM" ;;
+	DOS)					remoteSystem="DOS" ;;
+	#Dinothawr - single purpouse game
+	#Emerson Arcadia 2001
+	#Entex Adventure Vision
+	#Epoch Super Cassette Vision
+	#Elektronika BK - no remoteSystem=""
+	CHANNELF)				remoteSystem="Fairchild_-_Channel_F" ;;
+	FLASHBACK)				remoteSystem="Flashback" ;;
+	VECTREX)				remoteSystem="GCE_-_Vectrex" ;;
+	"G&W")					remoteSystem="Handheld_Electronic_Game" ;;
+	GB)						remoteSystem="Nintendo_-_Game_Boy" ;;
+	GB)						remoteSystem="Nintendo_-_Game_Boy_Color" ;;
+	GBA)					remoteSystem="Nintendo_-_Game_Boy_Advance" ;;
+	#GamePark GP32
+	#Hartung Game Master
+	#LeapFrog Leapster Learning Game System
+	JUMPNBUMP)				remoteSystem="Jump_'n_Bump" ;;
+	LOWRESNX)				remoteSystem="LowRes_NX" ;;
+	LUTRO)					remoteSystem="Lutro" ;;
+	ODYSSEY2)				remoteSystem="Mattel_-_Intellivision" ;;
+	INT)					remoteSystem="Lutro" ;;
+	#MicroW8 - no remoteSystem=""
+	MSX)					remoteSystem="Microsoft_-_MSX" ;;
+	MSX)					remoteSystem="Microsoft_-_MSX2" ;;
+	#MrBoom - single purpouse game
+	PCE)					remoteSystem="NEC_-_PC_Engine_-_TurboGrafx_16" ;;
+	PCE)					remoteSystem="NEC_-_PC_Engine_-_TurboGrafx_CD" ;;
+	PCE)					remoteSystem="NEC_-_PC_Engine_SuperGrafx" ;;
+	PC_88)					remoteSystem="NEC_-_PC-8001_-_PC-8801" ;;
+	#NEC - PC-98
+	#NEC - PC-FX
+	NES)					remoteSystem="Nintendo_-_Nintendo_Entertainment_System" ;;
+	NES)					remoteSystem="Nintendo_-_Family_Computer_Disk_System" ;;
+	POKEMINI)				remoteSystem="Nintendo_-_Pokemon_Mini" ;;
+	SNES)					remoteSystem="Nintendo_-_Super_Nintendo_Entertainment_System" ;;
+	#Nintendo 64
+	#Nintendo DS
+	#Nintendo GC
+	SNES)					remoteSystem="Nintendo_-_Satellaview" ;;
+	SNES)					remoteSystem="Nintendo - Sufami Turbo" ;;
+	#Nintendo Wii
+	#Nintendo Wii U
+	#Philips CD-i
+	ODYSSEY2)				remoteSystem="Philips_-_Videopac+" ;;
+	PS1)					remoteSystem="Sony_-_PlayStation" ;;
+	#PS2
+	#PS3
+	#PSP
+	#PSVITA
+	QUAKE_1)				remoteSystem="Quake" ;;
+	#Quake II - TODO
+	#Quake III
+	#RCA Studio II
+	#RPG Maker - TODO
+	#Rick Dangerous - single purpouse game 
+	SHARP_X1)				remoteSystem="Sharp_-_X1" ;;
+	#Sharp X68000
+	SCUMMVM)				remoteSystem="ScummVM" ;;
+	SMS)					remoteSystem="Sega_-_SG-1000" ;;
+	SMS)					remoteSystem="Sega_-_Game_Gear" ;;
+	SMS)					remoteSystem="Sega_-_Master_System_-_Mark_III" ;;
+	SMD)					remoteSystem="Sega_-_Mega_Drive_-_Genesis" ;;
+	SMD)					remoteSystem="Sega_-_Mega-CD_-_Sega_CD" ;;
+	SMD)					remoteSystem="Sega_-_32X" ;;
+	SMD)					remoteSystem="SEGA_-_PICO" ;;
+	#SEGA Saturn
+	#SEGA Dreamcast
+	#SEGA Naomi
+	#SEGA Naomi2
+	#SEGA VMU - no remoteSystem=""
+	Z80)					remoteSystem="Sinclair_-_ZX_Spectrum" ;;
+	ZX81)					remoteSystem="Sinclair_-_ZX_81" ;;
+	#SNK Neo Geo CD
+	NGP)					remoteSystem="SNK_-_Neo_Geo_Pocket" ;;
+	NGP)					remoteSystem="SNK_-_Neo_Geo_Pocket_Color" ;;
+	MSX)					remoteSystem="Spectravideo_-_SVI-318_-_SVI-328" ;;
+	#Texas Instruments - no remoteSystem=""
+	#The 3DO
+	TIC80)					remoteSystem="TIC-80" ;;
+	THOMSON)				remoteSystem="Thomson_-_MOTO" ;;
+	#Tiger Game.com
+	#Tomb Raider - TODO
+	#VTech CreatiVision
+	#VTech V.Smile
+	#Vircon32
+	WASM4)					remoteSystem="WASM-4" ;;
+	SUPERVISION)			remoteSystem="Watara_-_Supervision" ;;
+	WOLFENSTEIN3D)			remoteSystem="Wolfenstein_3D" ;;
+	#VaporSpec - no remoteSystem=""
 	*)
 		echo "unknown system, exiting."
 		exit
