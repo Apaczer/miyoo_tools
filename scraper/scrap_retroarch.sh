@@ -1,13 +1,15 @@
 #!/bin/sh
 #echo $0 $*    # for debugging
 
-## Externel variables
-# current_system=${1}
-# current_rom="${2}"
-# ss_media_type="${ss_media_type}"
+## Externel arg. variables
+current_system=$1
+current_rom="$2"
 
 ## External (imported) variables
-# ${ScraperConfigFile}
+test -z "${ScraperConfigFile}" && \
+	ScraperConfigFile=/mnt/apps/scraper/.scraper.cfg
+test -z ${ROMS} && \
+    ROMS=/roms
 
 if [ -z "$1" ]
 then
@@ -30,9 +32,6 @@ romcount=0
 scrap_success=0
 scrap_fail=0
 scrap_notrequired=0
-
-current_system=$1
-current_rom="$2"
 
 get_ra_alias(){
 	# find the corresponding remoteSystem for Retroarch scraping
@@ -166,7 +165,7 @@ esac
 
 #Retroarch system folder name
 get_ra_alias $current_system
-mkdir -p $HOME/roms/$current_system/.images &> /dev/null
+mkdir -p $HOME${ROMS}/$current_system/.images &> /dev/null
 clear
 echo -e "\n*****************************************************"
 echo -e "*******************   RETROARCH   *******************"
@@ -198,8 +197,8 @@ if ! [ -z "$current_rom" ]; then
 fi
 
 ## Debug
-#eval echo "find $HOME/roms/$current_system -maxdepth 2 -type f ! -name '.*' ! -name '*.xml' ! -name '*.db' ! -path '*/.images/*' ! -path '*/.*/*' $romfilter"
-for file in $(eval "find $HOME/roms/$current_system -maxdepth 2 -type f \
+#eval echo "find $HOME${ROMS}/$current_system -maxdepth 2 -type f ! -name '.*' ! -name '*.xml' ! -name '*.db' ! -path '*/.images/*' ! -path '*/.*/*' $romfilter"
+for file in $(eval "find $HOME${ROMS}/$current_system -maxdepth 2 -type f \
 	! -name '.*' ! -name '*.xml' ! -name '*.cfg' ! -name '*.db' \
 	! -path '*/.images/*' ! -path '*/.*/*' $romfilter"); do
 	
@@ -222,7 +221,7 @@ for file in $(eval "find $HOME/roms/$current_system -maxdepth 2 -type f \
 	
 	if [ $startcapture = true ]; then
 			
-		FILE=$HOME/roms/$current_system/.images/$romNameNoExtension.png
+		FILE=$HOME${ROMS}/$current_system/.images/$romNameNoExtension.png
 		if [ -f "$FILE" ]; then
 			echo -e "${YELLOW}already Scraped !${NONE}"
 			scrap_notrequired=$((scrap_notrequired + 1))
@@ -231,13 +230,13 @@ for file in $(eval "find $HOME/roms/$current_system -maxdepth 2 -type f \
 			WgetResult=$?
 	
 			if [ $WgetResult = 0 ] ; then
-				wget -q  "http://thumbnails.libretro.com/$remoteSystemNoSpace/${media_type}/$romNameNoExtensionNoSpace.png" -O "$HOME/roms/$current_system/.images/$romNameNoExtension.png"
+				wget -q  "http://thumbnails.libretro.com/$remoteSystemNoSpace/${media_type}/$romNameNoExtensionNoSpace.png" -O "$HOME${ROMS}/$current_system/.images/$romNameNoExtension.png"
 
 				## Resizing :
-				#magick "$HOME/roms/$current_system/.images/$romNameNoExtension.png" -resize 250x360 "$HOME/roms/$current_system/.images/$romNameNoExtension-resized.png"
-				#mv "$HOME/roms/$current_system/.images/$romNameNoExtension-resized.png"  "$HOME/roms/$current_system/.images/$romNameNoExtension.png"
+				#magick "$HOME${ROMS}/$current_system/.images/$romNameNoExtension.png" -resize 250x360 "$HOME${ROMS}/$current_system/.images/$romNameNoExtension-resized.png"
+				#mv "$HOME${ROMS}/$current_system/.images/$romNameNoExtension-resized.png"  "$HOME${ROMS}/$current_system/.images/$romNameNoExtension.png"
 				
-				#pngScale "$HOME/roms/$current_system/.images/$romNameNoExtension.png" "$HOME/roms/$current_system/.images/$romNameNoExtension.png"
+				#pngScale "$HOME${ROMS}/$current_system/.images/$romNameNoExtension.png" "$HOME${ROMS}/$current_system/.images/$romNameNoExtension.png"
 
 				echo -e "${GREEN}Scraped!${NONE}"
 				scrap_success=$((scrap_success + 1));
