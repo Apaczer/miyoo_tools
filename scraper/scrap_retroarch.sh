@@ -6,6 +6,9 @@
 # current_rom="${2}"
 # ss_media_type="${ss_media_type}"
 
+## External (imported) variables
+# ${ScraperConfigFile}
+
 if [ -z "$1" ]
 then
   echo -e "\nusage : scrap_retroarch.sh emu_folder_name [rom_name]\nexample : scrap_retroarch SFC\n"
@@ -159,10 +162,7 @@ case $1 in # in order from rascraper
 		exit
 		;;
 esac
-
 }
-
-
 
 #Retroarch system folder name
 get_ra_alias $current_system
@@ -172,24 +172,25 @@ echo -e "\n*****************************************************"
 echo -e "*******************   RETROARCH   *******************"
 echo -e "*****************************************************\n\n"
 
-#media_type="$(sed -n 's:^Retroarchmedia_type = ::p' "${config}" | tr -d '"')"
-media_type="Named_Boxarts"
-if [ -z "$media_type" ]; then
-	echo -e " The currently selected media ($ss_media_type)\n is not compatible with Retroarch scraper.\n\n\n\n\n\n\n\n\n\n\n\n Exiting."
+if test -f "${ScraperConfigFile}"; then
+	media_type="$(sed -n 's:^Retroarchmedia_type = ::p' "${ScraperConfigFile}" | tr -d '"')"
+else
+	media_type="Named_Boxarts"
+fi
+if [ -z "$media_type" ] && [ "$media_type" != "Named_Boxarts" ] && [ "$media_type" != "Named_Titles" ] || [ "$media_type" != "Named_Snaps" ]; then
+	echo -e " The currently selected media ($media_type)\n is not compatible with Retroarch scraper.\n\n\n\n\n\n\n\n\n\n\n\n Exiting."
 	sleep 5
 	exit
 fi
 echo "Media Type: $media_type"
 echo -e "Scraping $current_system...\n"
-			
-			
+	
 # =================
 #this is a trick to manage spaces from find command, do not indent or modify
 IFS='
 '
 set -f
 # =================
-
 
 #Roms loop
 if ! [ -z "$current_rom" ]; then
@@ -245,8 +246,6 @@ for file in $(eval "find $HOME/roms/$current_system -maxdepth 2 -type f \
 				scrap_fail=$((scrap_fail + 1));
 			fi
 		fi
-	
-	
 	fi
 done
 
