@@ -19,6 +19,16 @@ wait_msg() {
 	fi
 }
 
+echo_psx() {
+    if ! test -z ${PC_DEBUG}; then
+        #echo in real POSIX shell does't use opt parameters like `-e` (only \n in [string])
+        echo "$1"
+    else
+        #echo with in BUSYBOX is more like dash, need to use `-e` opt and add escape operands like \n
+        echo -e "$1"
+    fi
+}
+
 ## External (imported) variables
 test -z "${ScraperConfigFile}" && \
 	ScraperConfigFile=/mnt/apps/scraper/.scraper.cfg
@@ -36,7 +46,7 @@ fi
 
 if [ -z "$1" ]
 then
-	echo -e "\nusage : scrap_retroarch.sh emu_folder_name [rom_name]\nexample : scrap_retroarch SFC\n"
+	echo_psx "\nusage : scrap_retroarch.sh emu_folder_name [rom_name]\nexample : scrap_retroarch SFC\n"
 	exit
 fi
 
@@ -190,9 +200,9 @@ esac
 get_ra_alias $current_system
 mkdir -p ${ROMS}/$current_system/.images &> /dev/null
 clear
-echo -e "\n*****************************************************"
-echo -e "*******************   RETROARCH   *******************"
-echo -e "*****************************************************\n\n"
+echo_psx "\n*****************************************************"
+echo_psx "*******************   RETROARCH   *******************"
+echo_psx "*****************************************************\n\n"
 
 if test -f "${ScraperConfigFile}"; then
 	media_type="$(sed -n 's:^Retroarchmedia_type = ::p' "${ScraperConfigFile}" | tr -d '"')"
@@ -200,12 +210,12 @@ else
 	media_type="Named_Boxarts"
 fi
 if [ -z "$media_type" ] && [ "$media_type" != "Named_Boxarts" ] && [ "$media_type" != "Named_Titles" ] && [ "$media_type" != "Named_Snaps" ]; then
-	echo -e " The currently selected media ($media_type)\n is not compatible with Retroarch scraper.\n\n\n\n\n\n\n\n\n\n\n\n Exiting."
+	echo_psx " The currently selected media ($media_type)\n is not compatible with Retroarch scraper.\n\n\n\n\n\n\n\n\n\n\n\n Exiting."
 	sleep 5
 	exit
 fi
 echo "Media Type: $media_type"
-echo -e "Scraping $current_system...\n"
+echo_psx "Scraping $current_system...\n"
 
 # =================
 #this is a trick to manage spaces from find command, do not indent or modify
@@ -235,7 +245,7 @@ for file in $(eval "find ${ROMS}/$current_system -maxdepth 2 -type f \
 	
 	echo $romNameNoExtension
 	test x"$DEBUG" = "xyes" && \
-		echo -e "$romNameNoExtension \n   ---- $romNameNoExtensionNoSpace"
+		echo_psx "$romNameNoExtension \n   ---- $romNameNoExtensionNoSpace"
 	
 	remoteSystemNoSpace=$(echo $remoteSystem | sed 's/ /%20/g')
 	
@@ -245,7 +255,7 @@ for file in $(eval "find ${ROMS}/$current_system -maxdepth 2 -type f \
 			
 		FILE=${ROMS}/$current_system/.images/$romNameNoExtension.png
 		if [ -f "$FILE" ]; then
-			echo -e "${YELLOW}already Scraped !${NONE}"
+			echo_psx "${YELLOW}already Scraped !${NONE}"
 			scrap_notrequired=$((scrap_notrequired + 1))
 		else
 			test x"$DEBUG" = "xyes" && \
@@ -262,22 +272,22 @@ for file in $(eval "find ${ROMS}/$current_system -maxdepth 2 -type f \
 				
 				#pngScale "${ROMS}/$current_system/.images/$romNameNoExtension.png" "${ROMS}/$current_system/.images/$romNameNoExtension.png"
 
-				echo -e "${GREEN}Scraped!${NONE}"
+				echo_psx "${GREEN}Scraped!${NONE}"
 				scrap_success=$((scrap_success + 1));
 			else
-				echo -e "${RED}No match found${NONE}"
+				echo_psx "${RED}No match found${NONE}"
 				scrap_fail=$((scrap_fail + 1));
 			fi
 		fi
 	fi
 done
 
-echo -e "\n--------------------------"
+echo_psx "\n--------------------------"
 echo "Total scanned roms	: $romcount"
 echo "--------------------------"
 echo "Successfully scraped	: $scrap_success"
 echo "Alread present		: $scrap_notrequired"
 echo "Failed or not found	: $scrap_fail"
-echo -e "--------------------------\n"
+echo_psx "--------------------------\n"
 sleep 2
 echo "**********   Retroarch scraping finished   **********"

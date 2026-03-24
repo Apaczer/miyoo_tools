@@ -26,15 +26,25 @@ romNameNoExtension=${romname%.*}
 romimage="${ROMS}/$CurrentSystem/.images/$romNameNoExtension.png"
 
 #global funcitons
+## POSIX doesn't allow exporting func. !!
 wait_msg() {
     if ! test -z ${PC_DEBUG}; then
         sleep 3
     else
     ## read is different in POSIX shell (should work on BusyBox)
-        read -n 1 -s -r -p "Press A to continue"
+        read -n 1 -s -r -p "Press START to continue"
     fi
 }
-#export wait_msg # POSIX doesn't allow exporting func.
+
+echo_psx() {
+    if ! test -z ${PC_DEBUG}; then
+        #echo in real POSIX shell does't use opt parameters like `-e` (only \n in [string])
+        echo "$1"
+    else
+        #echo with in BUSYBOX is more like dash, need to use `-e` opt and add escape operands like \n
+        echo -e "$1"
+    fi
+}
 
 # Check if the configuration file exists
 if [ ! -f "$ScraperConfigFile" ]; then
@@ -58,7 +68,7 @@ Menu_Config() {
     Option1="Media preferences"
     Option2="Back to Main Menu"
     
-    Mychoice=$( echo "$Option1\n$Option2" | ${ShellectApp} -t "      --== CONFIGURATION MENU ==--" -b "Press A to validate your choice.")
+    Mychoice=$( echo_psx "$Option1\n$Option2" | ${ShellectApp} -t "      --== CONFIGURATION MENU ==--" -b "Press A to validate your choice.")
 
     [ "$Mychoice" = "$Option1" ] && Menu_Config_MediaType
 	[ "$Mychoice" = "$Option2" ] && Menu_Main
@@ -67,12 +77,12 @@ Menu_Config() {
 Menu_Config_MediaType() {
     # Display Welcome
     clear
-    echo -e 
-    echo -e "====================================================\n\n"
-    echo -e " The media types\n\n"
-    echo -e "	RA = Retroarch\n\n"
+    echo_psx 
+    echo_psx "====================================================\n\n"
+    echo_psx " The media types\n\n"
+    echo_psx "	RA = Retroarch\n\n"
   
-    echo -e "====================================================\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+    echo_psx "====================================================\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 	
     # retrieve current media settings
     RetroarchMediaType="$(sed -n 's:^Retroarchmedia_type = ::p' "${ScraperConfigFile}" | tr -d '"')"
@@ -85,7 +95,7 @@ Menu_Config_MediaType() {
     Option03="Screenshot - In Game       (RA)"
 	Option04="Back to Configuration Menu"
 
-    Mychoice=$( echo "$Option01\n$Option02\n$Option03\n$Option04\n" | ${ShellectApp} -t\ "Current media type : $RetroarchMediaType" -b "Press A to validate your choice.")
+    Mychoice=$( echo_psx "$Option01\n$Option02\n$Option03\n$Option04\n" | ${ShellectApp} -t\ "Current media type : $RetroarchMediaType" -b "Press A to validate your choice.")
     
     [ "$Mychoice" = "$Option01" ]  && RAmediaType="Named_Boxarts"  
     [ "$Mychoice" = "$Option02" ]  && RAmediaType="Named_Titles"  
@@ -116,16 +126,16 @@ Launch_Scraping() {
     if [ -f "$romimage" ] && ! [ "$onerom" = "" ] ; then
         echo "exiting $romimage"
         sleep 4 
-        pkill st
+        exit
     fi  # exit if only one rom must be scraped and is already found
 
-	pkill st
+	exit
 }
 
 Delete_Rom_Cover() {
     clear
     rm "${romimage}"
-    echo -e "$romNameNoExtension.png\nRemoved\n"
+    echo_psx "$romNameNoExtension.png\nRemoved\n"
     wait_msg
     clear
     Menu_Main
@@ -142,7 +152,7 @@ Menu_Main() {
     Option5="Exit"
 
     clear
-    Mychoice=$( echo "$Option1\n$Option2\n$Option3\n$Option4\n$Option5" | ${ShellectApp} -t "           --== MAIN MENU ==--" -b "                     Menu : Exit        A : Validate ")
+    Mychoice=$( echo_psx "$Option1\n$Option2\n$Option3\n$Option4\n$Option5" | ${ShellectApp} -t "           --== MAIN MENU ==--" -b "                     Select(hold): Exit        Start/Y: Confirm  ")
 
     [ "$Mychoice" = "$Option1" ] && (onerom=0; Launch_Scraping;)
     [ "$Mychoice" = "$Option2" ] && (onerom=1; Launch_Scraping;)
