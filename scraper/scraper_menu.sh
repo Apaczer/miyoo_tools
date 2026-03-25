@@ -12,18 +12,12 @@ test -z ${ROMS} && \
 if test -z "${PC_DEBUG}"; then
     export ScraperConfigFile=/mnt/apps/scraper/.scraper.cfg
     export ShellectApp=/usr/bin/shellect
-    export ScraperApp=/mnt/apps/scraper/scrap_retroarch.sh
+    export ScraperApp=/mnt/apps/scraper/scraper_libretro.sh
 else
     export ScraperConfigFile=${HOME}/.scraper.cfg
     export ShellectApp=/usr/bin/shellect
-    export ScraperApp=/usr/bin/scrap_retroarch.sh
+    export ScraperApp=/usr/bin/scraper_libretro.sh
 fi
-
-#internal variables
-romname=$(basename "$1")
-CurrentSystem=$(echo "$(realpath $1)" | grep -o "/$(basename ${ROMS})/[^/]*" | cut -d'/' -f3)
-romNameNoExtension=${romname%.*}
-romimage="${ROMS}/$CurrentSystem/.images/$romNameNoExtension.png"
 
 #global funcitons
 ## POSIX doesn't allow exporting func. !!
@@ -46,11 +40,23 @@ echo_psx() {
     fi
 }
 
+if [ -z "$1" ]; then
+    #for PC_DEBUG run e.g. ROMS=/home/roms PC_DEBUG=1 ./scraper_menu.sh ./roms/NES/Battletoads\ \(USA\).nes
+	echo_psx "\nusage : scraper_menu.sh [ROM_PATH]\nexample : scraper_menu.sh /roms/NES/Battletoads\ \(USA\).nes\n"
+	exit
+fi
+
+#internal variables
+romname=$(basename "$1")
+CurrentSystem=$(echo "$(realpath $1)" | grep -o "/$(basename ${ROMS})/[^/]*" | cut -d'/' -f3)
+romNameNoExtension=${romname%.*}
+romimage="${ROMS}/$CurrentSystem/.images/$romNameNoExtension.png"
+
 # Check if the configuration file exists
 if [ ! -f "$ScraperConfigFile" ]; then
     echo "Warning: configuration file not found, creating default in ${ScraperConfigFile}"
     wait_msg
-    echo "Retroarchmedia_type = \"Named_Boxarts\"" > ${ScraperConfigFile}
+    echo "LibretroMedia_type = \"Named_Boxarts\"" > ${ScraperConfigFile}
 fi
 
 # for debugging
@@ -68,7 +74,7 @@ Menu_Config() {
     Option1="Media preferences"
     Option2="Back to Main Menu"
     
-    Mychoice=$( echo_psx "$Option1\n$Option2" | ${ShellectApp} -t "      --== CONFIGURATION MENU ==--" -b "Press A to validate your choice.")
+    Mychoice=$( echo_psx "$Option1\n$Option2" | ${ShellectApp} -t "      --== CONFIGURATION MENU ==--" -b "Press Start/Y/⮕ to select.")
 
     [ "$Mychoice" = "$Option1" ] && Menu_Config_MediaType
 	[ "$Mychoice" = "$Option2" ] && Menu_Main
@@ -80,31 +86,31 @@ Menu_Config_MediaType() {
     echo_psx 
     echo_psx "====================================================\n\n"
     echo_psx " The media types\n\n"
-    echo_psx "	RA = Retroarch\n\n"
+    echo_psx "	LR = Libretro\n\n"
   
     echo_psx "====================================================\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 	
     # retrieve current media settings
-    RetroarchMediaType="$(sed -n 's:^Retroarchmedia_type = ::p' "${ScraperConfigFile}" | tr -d '"')"
+    LibretroMediaType="$(sed -n 's:^LibretroMedia_type = ::p' "${ScraperConfigFile}" | tr -d '"')"
 
     clear
 
-    # Screenscreaper.fr
-    Option01="Box Art                    (RA)"
-    Option02="Screenshot - Title Screen  (RA)"
-    Option03="Screenshot - In Game       (RA)"
+    # thumbnails.libretro.com
+    Option01="Box Art                    (LR)"
+    Option02="Screenshot - Title Screen  (LR)"
+    Option03="Screenshot - In Game       (LR)"
 	Option04="Back to Configuration Menu"
 
-    Mychoice=$( echo_psx "$Option01\n$Option02\n$Option03\n$Option04\n" | ${ShellectApp} -t\ "Current media type : $RetroarchMediaType" -b "Press A to validate your choice.")
+    Mychoice=$( echo_psx "$Option01\n$Option02\n$Option03\n$Option04\n" | ${ShellectApp} -t\ "Current media type : $LibretroMediaType" -b "Press Start/Y/⮕ to select.")
     
-    [ "$Mychoice" = "$Option01" ]  && RAmediaType="Named_Boxarts"  
-    [ "$Mychoice" = "$Option02" ]  && RAmediaType="Named_Titles"  
-    [ "$Mychoice" = "$Option03" ]  && RAmediaType="Named_Snaps"  
+    [ "$Mychoice" = "$Option01" ]  && LRmediaType="Named_Boxarts"  
+    [ "$Mychoice" = "$Option02" ]  && LRmediaType="Named_Titles"  
+    [ "$Mychoice" = "$Option03" ]  && LRmediaType="Named_Snaps"  
 	[ "$Mychoice" = "$Option04" ]  && Menu_Config && return
 					  
     clear
 
-    sed -i "s:^Retroarchmedia_type.*:Retroarchmedia_type = \"${RAmediaType}\":g" "${ScraperConfigFile}"
+    sed -i "s:^LibretroMedia_type.*:LibretroMedia_type = \"${LRmediaType}\":g" "${ScraperConfigFile}"
     sync
     Menu_Config
 }
@@ -120,7 +126,7 @@ Launch_Scraping() {
     wait_msg
     [ "$onerom" = "1" ] && onerom="$romname" || onerom=""
     
-    # run the RA script
+    # run the Libretro Scraper script
     ${ScraperApp} $CurrentSystem "$onerom"
 
     if [ -f "$romimage" ] && ! [ "$onerom" = "" ] ; then

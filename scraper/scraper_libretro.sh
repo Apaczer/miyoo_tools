@@ -44,9 +44,8 @@ if test x"$DEBUG" = "xyes"; then
 	wait_msg
 fi
 
-if [ -z "$1" ]
-then
-	echo_psx "\nusage : scrap_retroarch.sh emu_folder_name [rom_name]\nexample : scrap_retroarch SFC\n"
+if [ -z "$1" ]; then
+	echo_psx "\nusage : scraper_libretro.sh emu_folder_name [rom_name]\nexample : ./scraper_libretro.sh SFC\n"
 	exit
 fi
 
@@ -67,7 +66,7 @@ scrap_fail=0
 scrap_notrequired=0
 
 get_ra_alias(){
-	# find the corresponding remoteSystem for Retroarch scraping
+	# find the corresponding remoteSystem for Libretro scraping
 	case $1 in # in order from rascraper
 		FBA)					remoteSystem="FBNeo - Arcade Games" ;; # ARCADE
 		MAME)					remoteSystem="MAME" ;; # ARCADE
@@ -196,21 +195,21 @@ get_ra_alias(){
 esac
 }
 
-#Retroarch system folder name
+#Libretro system folder name
 get_ra_alias $current_system
 mkdir -p ${ROMS}/$current_system/.images &> /dev/null
 clear
 echo_psx "\n*****************************************************"
-echo_psx "*******************   RETROARCH   *******************"
+echo_psx "************** LIBRETRO Thumbnails ********************"
 echo_psx "*****************************************************\n\n"
 
 if test -f "${ScraperConfigFile}"; then
-	media_type="$(sed -n 's:^Retroarchmedia_type = ::p' "${ScraperConfigFile}" | tr -d '"')"
+	media_type="$(sed -n 's:^LibretroMedia_type = ::p' "${ScraperConfigFile}" | tr -d '"')"
 else
 	media_type="Named_Boxarts"
 fi
 if [ -z "$media_type" ] && [ "$media_type" != "Named_Boxarts" ] && [ "$media_type" != "Named_Titles" ] && [ "$media_type" != "Named_Snaps" ]; then
-	echo_psx " The currently selected media ($media_type)\n is not compatible with Retroarch scraper.\n\n\n\n\n\n\n\n\n\n\n\n Exiting."
+	echo_psx " The currently selected media ($media_type)\n is not compatible with Libretro scraper.\n\n\n\n\n\n\n\n\n\n\n\n Exiting."
 	sleep 5
 	exit
 fi
@@ -290,4 +289,4 @@ echo "Alread present		: $scrap_notrequired"
 echo "Failed or not found	: $scrap_fail"
 echo_psx "--------------------------\n"
 sleep 2
-echo "**********   Retroarch scraping finished   **********"
+echo "**********  Libretro scraping finished   **********"
