@@ -42,8 +42,8 @@ echo_psx() {
 
 if [ -z "$1" ]; then
     #for PC_DEBUG run e.g. ROMS=/home/roms PC_DEBUG=1 ./scraper_menu.sh ./roms/NES/Battletoads\ \(USA\).nes
-	echo_psx "\nusage : scraper_menu.sh [ROM_PATH]\nexample : scraper_menu.sh /roms/NES/Battletoads\ \(USA\).nes\n"
-	exit
+    echo_psx "\nusage : scraper_menu.sh [ROM_PATH]\nexample : scraper_menu.sh /roms/NES/Battletoads\ \(USA\).nes\n"
+    exit
 fi
 
 #internal variables
@@ -74,10 +74,10 @@ Menu_Config() {
     Option1="Media preferences"
     Option2="Back to Main Menu"
     
-    Mychoice=$( echo_psx "$Option1\n$Option2" | ${ShellectApp} -t "      --== CONFIGURATION MENU ==--" -b "Press Start/Y/⮕ to select.")
+    Mychoice=$( echo_psx "$Option1\n$Option2" | ${ShellectApp} -t "      --== CONFIGURATION MENU ==--" -b "Press Start/Y/Right to select.")
 
     [ "$Mychoice" = "$Option1" ] && Menu_Config_MediaType
-	[ "$Mychoice" = "$Option2" ] && Menu_Main
+    [ "$Mychoice" = "$Option2" ] && Menu_Main
 }
 
 Menu_Config_MediaType() {
@@ -89,7 +89,8 @@ Menu_Config_MediaType() {
     echo_psx "	LR = Libretro\n\n"
   
     echo_psx "====================================================\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
-	
+    sleep 1.5 # display shortly above screen
+
     # retrieve current media settings
     LibretroMediaType="$(sed -n 's:^LibretroMedia_type = ::p' "${ScraperConfigFile}" | tr -d '"')"
 
@@ -99,15 +100,16 @@ Menu_Config_MediaType() {
     Option01="Box Art                    (LR)"
     Option02="Screenshot - Title Screen  (LR)"
     Option03="Screenshot - In Game       (LR)"
-	Option04="Back to Configuration Menu"
+    Option04="Back to Configuration Menu"
 
-    Mychoice=$( echo_psx "$Option01\n$Option02\n$Option03\n$Option04\n" | ${ShellectApp} -t\ "Current media type : $LibretroMediaType" -b "Press Start/Y/⮕ to select.")
+    Mychoice=$( echo_psx "$Option01\n$Option02\n$Option03\n$Option04\n"\
+                 | ${ShellectApp} -t\ "Current media type : $LibretroMediaType" -b "Press Start/Y/Right to select.")
     
     [ "$Mychoice" = "$Option01" ]  && LRmediaType="Named_Boxarts"  
     [ "$Mychoice" = "$Option02" ]  && LRmediaType="Named_Titles"  
     [ "$Mychoice" = "$Option03" ]  && LRmediaType="Named_Snaps"  
-	[ "$Mychoice" = "$Option04" ]  && Menu_Config && return
-					  
+    [ "$Mychoice" = "$Option04" ]  && Menu_Config && return
+
     clear
 
     sed -i "s:^LibretroMedia_type.*:LibretroMedia_type = \"${LRmediaType}\":g" "${ScraperConfigFile}"
@@ -118,14 +120,14 @@ Menu_Config_MediaType() {
 ##########################################################################################
 
 Launch_Scraping() {
-	if [ "$(ip r)" = "" ]; then 
-		echo "You must be connected to wifi to use Scraper"
-		wait_msg
-		exit
-	fi
+    if [ "$(ip r)" = "" ]; then 
+        echo "You must be connected to wifi to use Scraper"
+        wait_msg
+        exit
+    fi
     wait_msg
     [ "$onerom" = "1" ] && onerom="$romname" || onerom=""
-    
+
     # run the Libretro Scraper script
     ${ScraperApp} $CurrentSystem "$onerom"
 
@@ -135,7 +137,7 @@ Launch_Scraping() {
         exit
     fi  # exit if only one rom must be scraped and is already found
 
-	exit
+    exit
 }
 
 Delete_Rom_Cover() {
@@ -158,13 +160,25 @@ Menu_Main() {
     Option5="Exit"
 
     clear
-    Mychoice=$( echo_psx "$Option1\n$Option2\n$Option3\n$Option4\n$Option5" | ${ShellectApp} -t "           --== MAIN MENU ==--" -b "                     Select(hold): Exit        Start/Y: Confirm  ")
-
-    [ "$Mychoice" = "$Option1" ] && (onerom=0; Launch_Scraping;)
-    [ "$Mychoice" = "$Option2" ] && (onerom=1; Launch_Scraping;)
-    [ "$Mychoice" = "$Option3" ] && Delete_Rom_Cover
-    [ "$Mychoice" = "$Option4" ] && Menu_Config
-    [ "$Mychoice" = "$Option5" ] && exit
+    Mychoice=$( echo_psx "$Option1\n$Option2\n$Option3\n$Option4\n$Option5"\
+                 | ${ShellectApp} -t "           --== MAIN MENU ==--" -b "   Select(hold): Exit        Start/Y/Right: Choose.  ")
+    case "$Mychoice" in
+        "$Option1")
+            onerom=0
+            Launch_Scraping
+            ;;
+        "$Option2")
+            test -z "$Option2" && exit # sanity check for Escape press
+            onerom=1
+            Launch_Scraping
+            ;;
+        "$Option3")
+            test -z "$Option3" && exit # sanity check for Escape press
+            Delete_Rom_Cover;;
+        "$Option4") 
+            Menu_Config;;
+        *) exit;;
+    esac
 }
 
 Menu_Main
