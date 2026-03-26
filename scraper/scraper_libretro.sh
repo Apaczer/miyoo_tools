@@ -4,8 +4,9 @@
 ## Externel arg. variables
 current_system=$1
 current_rom="$2"
-#DEBUG=yes
-#${PC_DEBUG}
+DEBUG=${DEBUG:="no"}
+NO_SHELLECT=${NO_SHELLECT:=false}
+PC_DEBUG=${PC_DEBUG:=""}
 ! test -z ${PC_DEBUG} && \
 	DEBUG="yes"
 
@@ -49,6 +50,13 @@ if [ -z "$1" ]; then
 	exit
 fi
 
+# Internal variables
+# Recommended ShellectApp=/usr/bin/shellect
+if ! command -v shellect > /dev/null; then
+	NO_SHELLECT=true
+	test x"$DEBUG" = "xyes" && \
+		echo_psx "WARNING: Missing dependence! Please install \"shellect\" script in your PATH!"
+fi
 NONE='\033[00m'
 RED='\033[01;31m'
 GREEN='\033[01;32m'
@@ -130,8 +138,7 @@ get_ra_alias(){
 		PC_88)					remoteSystem="NEC - PC-8001 - PC-8801" ;;
 		#NEC - PC-98
 		#NEC - PC-FX
-		NES)					remoteSystem="Nintendo - Nintendo Entertainment System" ;;
-		NES)					remoteSystem="Nintendo - Family Computer Disk System" ;;
+		NES)					remoteSystem="$1" ;; # NES/FAMICOM
 		POKEMINI)				remoteSystem="Nintendo - Pokemon Mini" ;;
 		SNES)					remoteSystem="Nintendo - Super Nintendo Entertainment System" ;;
 		#Nintendo 64
@@ -244,9 +251,28 @@ for file in $(eval "find ${ROMS}/$current_system -maxdepth 2 -type f \
 	
 	echo $romNameNoExtension
 	test x"$DEBUG" = "xyes" && \
-		echo_psx "$romNameNoExtension \n   ---- $romNameNoExtensionNoSpace"
+		echo_psx "romNameNoExtensionNoSpace = $romNameNoExtensionNoSpace"
 	
+	if [ "$remoteSystem" = "NES" ]; then
+		Option01="NES"
+		Option02="FAMICOM"
+
+		if ! ${NO_SHELLECT}; then
+			Mychoice=$( echo_psx "$Option01\n$Option02\n"\
+						| shellect -t\ "Current BoxArt System" -b "Press Start/Y/Right to select.")
+		else
+			Mychoice=$Option01
+		fi
+		case "$Mychoice" in
+			"$Option01") remoteSystem="Nintendo - Nintendo Entertainment System";;
+			"$Option02") remoteSystem="Nintendo - Family Computer Disk System";;
+			*) exit;;
+		esac
+	fi
+
 	remoteSystemNoSpace=$(echo $remoteSystem | sed 's/ /%20/g')
+	test x"$DEBUG" = "xyes" && \
+		echo_psx "remoteSystemNoSpace= $remoteSystemNoSpace"
 	
 	startcapture=true
 

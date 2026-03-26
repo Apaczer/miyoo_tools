@@ -1,22 +1,26 @@
 #!/bin/sh
 #echo $0 $*    # for debugging
 
+# Requires ShellectApp=/usr/bin/shellect
+if ! command -v shellect > /dev/null; then
+	echo "ERROR: Missing dependence! Please install \"shellect\" script in your PATH from https://github.com/huijunchen9260/shellect !"
+	sleep 2
+	exit
+fi
+
 #external (imported) variables:
-#DEBUG=yes
+DEBUG=${DEBUG:="no"}
+DEBUG=${ROMS:="/roms"}
 ! test -z ${PC_DEBUG} && \
 	DEBUG="yes"
-test -z ${ROMS} && \
-	ROMS=/roms
 
 #internal (exported) variables
 if test -z "${PC_DEBUG}"; then
 	export ScraperConfigFile=/mnt/apps/scraper/.scraper.cfg
-	export ShellectApp=/usr/bin/shellect
 	export ScraperApp=/mnt/apps/scraper/scraper_libretro.sh
 else
 	export ScraperConfigFile=${HOME}/.scraper.cfg
-	export ShellectApp=/usr/bin/shellect
-	export ScraperApp=/usr/bin/scraper_libretro.sh
+	export ScraperApp=scraper_libretro.sh
 fi
 
 #global funcitons
@@ -74,7 +78,7 @@ Menu_Config() {
 	Option1="Media preferences"
 	Option2="Back to Main Menu"
 	
-	Mychoice=$( echo_psx "$Option1\n$Option2" | ${ShellectApp} -t "      --== CONFIGURATION MENU ==--" -b "Press Start/Y/Right to select.")
+	Mychoice=$( echo_psx "$Option1\n$Option2" | shellect -t "      --== CONFIGURATION MENU ==--" -b "Press Start/Y/Right to select.")
 
 	[ "$Mychoice" = "$Option1" ] && Menu_Config_MediaType
 	[ "$Mychoice" = "$Option2" ] && Menu_Main
@@ -103,7 +107,7 @@ Menu_Config_MediaType() {
 	Option04="Back to Configuration Menu"
 
 	Mychoice=$( echo_psx "$Option01\n$Option02\n$Option03\n$Option04\n"\
-				 | ${ShellectApp} -t\ "Current media type : $LibretroMediaType" -b "Press Start/Y/Right to select.")
+				 | shellect -t\ "Current media type : $LibretroMediaType" -b "Press Start/Y/Right to select.")
 	
 	[ "$Mychoice" = "$Option01" ]  && LRmediaType="Named_Boxarts"  
 	[ "$Mychoice" = "$Option02" ]  && LRmediaType="Named_Titles"  
@@ -161,7 +165,7 @@ Menu_Main() {
 
 	clear
 	Mychoice=$( echo_psx "$Option1\n$Option2\n$Option3\n$Option4\n$Option5"\
-				 | ${ShellectApp} -t "           --== MAIN MENU ==--" -b "   Select(hold): Exit        Start/Y/Right: Choose.  ")
+				 | shellect -t "           --== MAIN MENU ==--" -b "   Select(hold): Exit        Start/Y/Right: Choose.  ")
 	case "$Mychoice" in
 		"$Option1")
 			onerom=0
