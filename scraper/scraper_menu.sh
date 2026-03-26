@@ -78,27 +78,19 @@ Menu_Config() {
 	Option1="Media preferences"
 	Option2="Back to Main Menu"
 	
-	Mychoice=$( echo_psx "$Option1\n$Option2" | shellect -t "      --== CONFIGURATION MENU ==--" -b "Press Start/Y/Right to select.")
+	top_msg="      --== CONFIGURATION MENU ==--"
+	bottom_msg="Press Start/Y/Right to select."
+
+	Mychoice=$( echo_psx "$Option1\n$Option2" | shellect -t "$top_msg" -b "$bottom_msg")
 
 	[ "$Mychoice" = "$Option1" ] && Menu_Config_MediaType
 	[ "$Mychoice" = "$Option2" ] && Menu_Main
 }
 
 Menu_Config_MediaType() {
-	# Display Welcome
 	clear
-	echo_psx 
-	echo_psx "====================================================\n\n"
-	echo_psx " The media types\n\n"
-	echo_psx "	LR = Libretro\n\n"
-  
-	echo_psx "====================================================\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
-	sleep 1.5 # display shortly above screen
-
 	# retrieve current media settings
 	LibretroMediaType="$(sed -n 's:^LibretroMedia_type = ::p' "${ScraperConfigFile}" | tr -d '"')"
-
-	clear
 
 	# thumbnails.libretro.com
 	Option01="Box Art                    (LR)"
@@ -106,8 +98,11 @@ Menu_Config_MediaType() {
 	Option03="Screenshot - In Game       (LR)"
 	Option04="Back to Configuration Menu"
 
+	top_msg="Current media type : $LibretroMediaType"
+	bottom_msg="Press Start/Y/Right to select."
+
 	Mychoice=$( echo_psx "$Option01\n$Option02\n$Option03\n$Option04\n"\
-				 | shellect -t\ "Current media type : $LibretroMediaType" -b "Press Start/Y/Right to select.")
+				 | shellect -t\ "$top_msg" -b "$bottom_msg")
 	
 	[ "$Mychoice" = "$Option01" ]  && LRmediaType="Named_Boxarts"  
 	[ "$Mychoice" = "$Option02" ]  && LRmediaType="Named_Titles"  
@@ -125,7 +120,7 @@ Menu_Config_MediaType() {
 
 Launch_Scraping() {
 	if [ "$(ip r)" = "" ]; then 
-		echo "You must be connected to wifi to use Scraper"
+		echo "You must have a Network connection to use Scraper"
 		wait_msg
 		exit
 	fi
@@ -164,8 +159,12 @@ Menu_Main() {
 	Option5="Exit"
 
 	clear
+
+	top_msg="           --== MAIN MENU ==--"
+	bottom_msg="   Select(hold): Exit        Start/Y/Right: Choose.  "
+
 	Mychoice=$( echo_psx "$Option1\n$Option2\n$Option3\n$Option4\n$Option5"\
-				 | shellect -t "           --== MAIN MENU ==--" -b "   Select(hold): Exit        Start/Y/Right: Choose.  ")
+				 | shellect -t "$top_msg" -b "$bottom_msg")
 	case "$Mychoice" in
 		"$Option1")
 			onerom=0

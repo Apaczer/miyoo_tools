@@ -21,13 +21,13 @@ wait_msg() {
 }
 
 echo_psx() {
-    if ! test -z ${PC_DEBUG}; then
-        #echo in real POSIX shell does't use opt parameters like `-e` (only \n in [string])
-        echo "$1"
-    else
-        #echo with in BUSYBOX is more like dash, need to use `-e` opt and add escape operands like \n
-        echo -e "$1"
-    fi
+	if ! test -z ${PC_DEBUG}; then
+		#echo in real POSIX shell doesn't use opt parameters like `-e` (only \n in [string])
+		echo "$1"
+	else
+		#echo with in BUSYBOX is more like dash, need to use `-e` opt and add escape operands like \n
+		echo -e "$1"
+	fi
 }
 
 ## External (imported) variables
@@ -46,7 +46,10 @@ if test x"$DEBUG" = "xyes"; then
 fi
 
 if [ -z "$1" ]; then
-	echo_psx "\nusage : scraper_libretro.sh emu_folder_name [rom_name]\nexample : ./scraper_libretro.sh SFC\n"
+	echo_psx "\nusage : scraper_libretro.sh emu_folder_name [rom_name]"
+	echo_psx "example_1 : ./scraper_libretro.sh NES"
+	echo_psx "example_2 : ./scraper_libretro.sh NES Battletoads\ \(USA\).nes\n"
+	#for PC_DEBUG run e.g.: ROMS=/home/roms PC_DEBUG=1 scraper_libretro.sh NES Battletoads\ \(USA\).nes
 	exit
 fi
 
@@ -79,8 +82,7 @@ get_ra_alias(){
 		FBA)					remoteSystem="FBNeo - Arcade Games" ;; # ARCADE
 		MAME)					remoteSystem="MAME" ;; # ARCADE
 		NEOGEO)					remoteSystem="SNK - Neo Geo" ;; # ARCADE
-		CPC)					remoteSystem="Amstrad - CPC" ;;
-		CPC)					remoteSystem="Amstrad - GX4000" ;;
+		CPC)					remoteSystem="$1" ;; # CPC / GX4000
 		ARDUBOY)				remoteSystem="Arduboy Inc - Arduboy" ;;
 		800)					remoteSystem="Atari - 8-bit Family" ;;
 		2600)					remoteSystem="Atari - 2600" ;;
@@ -90,10 +92,9 @@ get_ra_alias(){
 		LYNX)					remoteSystem="Atari - Lynx" ;;
 		ST)						remoteSystem="Atari - ST" ;;
 		#Atomiswave
-		WSWAN)					remoteSystem="Bandai - WonderSwan" ;;
-		WSWAN)					remoteSystem="Bandai - WonderSwan Color" ;;
+		WSWAN)					remoteSystem="$1" ;; # WSWAN / WSWAN COLOR
 		#CHIP-8 - no remoteSystem=""
-		MSX)					remoteSystem="Casio - Loopy" ;;
+		MSX)					remoteSystem="$1" ;; # CasioLoopy / MSX / MSX2 / Spectravideo
 		#Casio PV-1000
 		#Cave Story - single purpouse game
 		CHAILOVE)				remoteSystem="ChaiLove" ;;
@@ -117,8 +118,7 @@ get_ra_alias(){
 		FLASHBACK)				remoteSystem="Flashback" ;;
 		VECTREX)				remoteSystem="GCE - Vectrex" ;;
 		"G&W")					remoteSystem="Handheld Electronic Game" ;;
-		GB)						remoteSystem="Nintendo - Game Boy" ;;
-		GB)						remoteSystem="Nintendo - Game Boy Color" ;;
+		GB)						remoteSystem="$1" ;; # GameBoy / GameBoyColor
 		GBA)					remoteSystem="Nintendo - Game Boy Advance" ;;
 		#GamePark GP32
 		#Hartung Game Master
@@ -126,30 +126,23 @@ get_ra_alias(){
 		JUMPNBUMP)				remoteSystem="Jump 'n Bump" ;;
 		LOWRESNX)				remoteSystem="LowRes NX" ;;
 		LUTRO)					remoteSystem="Lutro" ;;
-		ODYSSEY2)				remoteSystem="Mattel - Intellivision" ;;
+		ODYSSEY2)				remoteSystem="$1" ;; # Intellivision / Videopac+
 		INT)					remoteSystem="Lutro" ;;
 		#MicroW8 - no remoteSystem=""
-		MSX)					remoteSystem="Microsoft - MSX" ;;
-		MSX)					remoteSystem="Microsoft - MSX2" ;;
 		#MrBoom - single purpouse game
-		PCE)					remoteSystem="NEC - PC Engine - TurboGrafx 16" ;;
-		PCE)					remoteSystem="NEC - PC Engine - TurboGrafx CD" ;;
-		PCE)					remoteSystem="NEC - PC Engine SuperGrafx" ;;
+		PCE)					remoteSystem="$1" ;; # PCE / PCE-CD / PCE-SuperGrafx
 		PC_88)					remoteSystem="NEC - PC-8001 - PC-8801" ;;
 		#NEC - PC-98
 		#NEC - PC-FX
 		NES)					remoteSystem="$1" ;; # NES/FAMICOM
 		POKEMINI)				remoteSystem="Nintendo - Pokemon Mini" ;;
-		SNES)					remoteSystem="Nintendo - Super Nintendo Entertainment System" ;;
+		SNES)					remoteSystem="$1" ;; # SuperNes / Satellaview / SufamiTurbo
 		#Nintendo 64
 		#Nintendo DS
 		#Nintendo GC
-		SNES)					remoteSystem="Nintendo - Satellaview" ;;
-		SNES)					remoteSystem="Nintendo - Sufami Turbo" ;;
 		#Nintendo Wii
 		#Nintendo Wii U
 		#Philips CD-i
-		ODYSSEY2)				remoteSystem="Philips - Videopac+" ;;
 		PS1)					remoteSystem="Sony - PlayStation" ;;
 		#PS2
 		#PS3
@@ -164,13 +157,8 @@ get_ra_alias(){
 		SHARP_X1)				remoteSystem="Sharp - X1" ;;
 		#Sharp X68000
 		SCUMMVM)				remoteSystem="ScummVM" ;;
-		SMS)					remoteSystem="Sega - SG-1000" ;;
-		SMS)					remoteSystem="Sega - Game Gear" ;;
-		SMS)					remoteSystem="Sega - Master System - Mark III" ;;
-		SMD)					remoteSystem="Sega - Mega Drive - Genesis" ;;
-		SMD)					remoteSystem="Sega - Mega-CD - Sega CD" ;;
-		SMD)					remoteSystem="Sega - 32X" ;;
-		SMD)					remoteSystem="SEGA - PICO" ;;
+		SMS)					remoteSystem="$1" ;; # SG1000 / GameGear / MasterSystem
+		SMD)					remoteSystem="$1" ;; # Genesis / SegaCD / Sega32X / PICO
 		#SEGA Saturn
 		#SEGA Dreamcast
 		#SEGA Naomi
@@ -179,9 +167,7 @@ get_ra_alias(){
 		Z80)					remoteSystem="Sinclair - ZX Spectrum" ;;
 		ZX81)					remoteSystem="Sinclair - ZX 81" ;;
 		#SNK Neo Geo CD
-		NGP)					remoteSystem="SNK - Neo Geo Pocket" ;;
-		NGP)					remoteSystem="SNK - Neo Geo Pocket Color" ;;
-		MSX)					remoteSystem="Spectravideo - SVI-318 - SVI-328" ;;
+		NGP)					remoteSystem="$1" ;; # NGP / NGP COLOR
 		#Texas Instruments - no remoteSystem=""
 		#The 3DO
 		TIC80)					remoteSystem="TIC-80" ;;
@@ -253,19 +239,186 @@ for file in $(eval "find ${ROMS}/$current_system -maxdepth 2 -type f \
 	test x"$DEBUG" = "xyes" && \
 		echo_psx "romNameNoExtensionNoSpace = $romNameNoExtensionNoSpace"
 	
+	top_msg="Current BoxArt System"
+	bottom_msg="Press Start/Y/Right to select."
+
 	if [ "$remoteSystem" = "NES" ]; then
 		Option01="NES"
 		Option02="FAMICOM"
 
 		if ! ${NO_SHELLECT}; then
 			Mychoice=$( echo_psx "$Option01\n$Option02\n"\
-						| shellect -t\ "Current BoxArt System" -b "Press Start/Y/Right to select.")
+						| shellect -t\ "$top_msg" -b "$bottom_msg")
 		else
 			Mychoice=$Option01
 		fi
 		case "$Mychoice" in
 			"$Option01") remoteSystem="Nintendo - Nintendo Entertainment System";;
 			"$Option02") remoteSystem="Nintendo - Family Computer Disk System";;
+			*) exit;;
+		esac
+	elif [ "$remoteSystem" = "CPC" ]; then
+		Option01="CPC"
+		Option02="GX4000"
+
+		if ! ${NO_SHELLECT}; then
+			Mychoice=$( echo_psx "$Option01\n$Option02\n"\
+						| shellect -t\ "$top_msg" -b "$bottom_msg")
+		else
+			Mychoice=$Option01
+		fi
+		case "$Mychoice" in
+			"$Option01") remoteSystem="Amstrad - CPC";;
+			"$Option02") remoteSystem="Amstrad - GX4000";;
+			*) exit;;
+		esac
+	elif [ "$remoteSystem" = "WSWAN" ]; then
+		Option01="WSWAN"
+		Option02="WSWAN COLOR"
+
+		if ! ${NO_SHELLECT}; then
+			Mychoice=$( echo_psx "$Option01\n$Option02\n"\
+						| shellect -t\ "$top_msg" -b "$bottom_msg")
+		else
+			Mychoice=$Option01
+		fi
+		case "$Mychoice" in
+			"$Option01") remoteSystem="Bandai - WonderSwan";;
+			"$Option02") remoteSystem="Bandai - WonderSwan Color";;
+			*) exit;;
+		esac
+	elif [ "$remoteSystem" = "MSX" ]; then
+		Option01="CasioLoopy"
+		Option02="MSX"
+		Option03="MSX2"
+		Option04="Spectravideo"
+
+		if ! ${NO_SHELLECT}; then
+			Mychoice=$( echo_psx "$Option01\n$Option02\n$Option03\n$Option04\n"\
+						| shellect -t\ "$top_msg" -b "$bottom_msg")
+		else
+			Mychoice=$Option02
+		fi
+		case "$Mychoice" in
+			"$Option01") remoteSystem="Casio - Loopy";;
+			"$Option02") remoteSystem="Microsoft - MSX";;
+			"$Option03") remoteSystem="Microsoft - MSX2";;
+			"$Option04") remoteSystem="Spectravideo - SVI-318 - SVI-328";;
+			*) exit;;
+		esac
+	elif [ "$remoteSystem" = "GB" ]; then
+		Option01="GameBoy"
+		Option02="GameBoyColor"
+
+		if ! ${NO_SHELLECT}; then
+			Mychoice=$( echo_psx "$Option01\n$Option02\n"\
+						| shellect -t\ "$top_msg" -b "$bottom_msg")
+		else
+			Mychoice=$Option01
+		fi
+		case "$Mychoice" in
+			"$Option01") remoteSystem="Nintendo - Game Boy";;
+			"$Option02") remoteSystem="Nintendo - Game Boy Color";;
+			*) exit;;
+		esac
+	elif [ "$remoteSystem" = "ODYSSEY2" ]; then
+		Option01="Intellivision"
+		Option02="Videopac+"
+
+		if ! ${NO_SHELLECT}; then
+			Mychoice=$( echo_psx "$Option01\n$Option02\n"\
+						| shellect -t\ "$top_msg" -b "$bottom_msg")
+		else
+			Mychoice=$Option01
+		fi
+		case "$Mychoice" in
+			"$Option01") remoteSystem="Mattel - Intellivision";;
+			"$Option02") remoteSystem="Philips - Videopac+";;
+			*) exit;;
+		esac
+	elif [ "$remoteSystem" = "PCE" ]; then
+		Option01="PCE"
+		Option02="PCE-CD"
+		Option03="PCE-SuperGrafx"
+
+		if ! ${NO_SHELLECT}; then
+			Mychoice=$( echo_psx "$Option01\n$Option02\n$Option03\n"\
+						| shellect -t\ "$top_msg" -b "$bottom_msg")
+		else
+			Mychoice=$Option01
+		fi
+		case "$Mychoice" in
+			"$Option01") remoteSystem="NEC - PC Engine - TurboGrafx 16";;
+			"$Option02") remoteSystem="NEC - PC Engine - TurboGrafx CD";;
+			"$Option03") remoteSystem="NEC - PC Engine SuperGrafx";;
+			*) exit;;
+		esac
+	elif [ "$remoteSystem" = "SNES" ]; then
+		Option01="SuperNES"
+		Option02="Satellaview"
+		Option03="SufamiTurbo"
+
+		if ! ${NO_SHELLECT}; then
+			Mychoice=$( echo_psx "$Option01\n$Option02\n$Option03\n"\
+						| shellect -t\ "$top_msg" -b "$bottom_msg")
+		else
+			Mychoice=$Option01
+		fi
+		case "$Mychoice" in
+			"$Option01") remoteSystem="Nintendo - Super Nintendo Entertainment System";;
+			"$Option02") remoteSystem="Nintendo - Satellaview";;
+			"$Option03") remoteSystem="Nintendo - Sufami Turbo";;
+			*) exit;;
+		esac
+	elif [ "$remoteSystem" = "SMS" ]; then
+		Option01="SG1000"
+		Option02="GameGear"
+		Option03="MasterSystem"
+
+		if ! ${NO_SHELLECT}; then
+			Mychoice=$( echo_psx "$Option01\n$Option02\n$Option03\n"\
+						| shellect -t\ "$top_msg" -b "$bottom_msg")
+		else
+			Mychoice=$Option01
+		fi
+		case "$Mychoice" in
+			"$Option01") remoteSystem="Sega - SG-1000";;
+			"$Option02") remoteSystem="Sega - Game Gear";;
+			"$Option03") remoteSystem="Sega - Master System - Mark III";;
+			*) exit;;
+		esac
+	elif [ "$remoteSystem" = "SMD" ]; then
+		Option01="Genesis"
+		Option02="SegaCD"
+		Option03="Sega32X"
+		Option04="PICO"
+
+		if ! ${NO_SHELLECT}; then
+			Mychoice=$( echo_psx "$Option01\n$Option02\n$Option03\n$Option04\n"\
+						| shellect -t\ "$top_msg" -b "$bottom_msg")
+		else
+			Mychoice=$Option01
+		fi
+		case "$Mychoice" in
+			"$Option01") remoteSystem="Sega - Mega Drive - Genesis";;
+			"$Option02") remoteSystem="Sega - Mega-CD - Sega CD";;
+			"$Option03") remoteSystem="Sega - 32X";;
+			"$Option04") remoteSystem="SEGA - PICO";;
+			*) exit;;
+		esac
+	elif [ "$remoteSystem" = "NGP" ]; then
+		Option01="NGP"
+		Option02="NGP COLOR"
+
+		if ! ${NO_SHELLECT}; then
+			Mychoice=$( echo_psx "$Option01\n$Option02\n"\
+						| shellect -t\ "$top_msg" -b "$bottom_msg")
+		else
+			Mychoice=$Option01
+		fi
+		case "$Mychoice" in
+			"$Option01") remoteSystem="SNK - Neo Geo Pocket";;
+			"$Option02") remoteSystem="SNK - Neo Geo Pocket Color";;
 			*) exit;;
 		esac
 	fi
