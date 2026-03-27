@@ -10,14 +10,20 @@ fi
 
 #external (imported) variables:
 DEBUG=${DEBUG:="no"}
-DEBUG=${ROMS:="/roms"}
-! test -z ${PC_DEBUG} && \
+PC_DEBUG=${PC_DEBUG:=""}
+ROMS=${ROMS:="/roms"}
+BOXART_DIR=${BOXART_DIR:=".images"}
+if ! test -z ${PC_DEBUG}; then
 	DEBUG="yes"
+	HOME=${HOME:="/home"}
+else
+	HOME=${HOME:="/mnt"}
+fi
 
 #internal (exported) variables
 if test -z "${PC_DEBUG}"; then
-	export ScraperConfigFile=/mnt/apps/scraper/.scraper.cfg
-	export ScraperApp=/mnt/apps/scraper/scraper_libretro.sh
+	export ScraperConfigFile=${HOME}/apps/scraper/.scraper.cfg
+	export ScraperApp=${HOME}/apps/scraper/scraper_libretro.sh
 else
 	export ScraperConfigFile=${HOME}/.scraper.cfg
 	export ScraperApp=scraper_libretro.sh
@@ -54,7 +60,7 @@ fi
 romname=$(basename "$1")
 CurrentSystem=$(echo "$(realpath $1)" | grep -o "/$(basename ${ROMS})/[^/]*" | cut -d'/' -f3)
 romNameNoExtension=${romname%.*}
-romimage="${ROMS}/$CurrentSystem/.images/$romNameNoExtension.png"
+romimage="${ROMS}/$CurrentSystem/${BOXART_DIR}/$romNameNoExtension.png"
 
 # Check if the configuration file exists
 if [ ! -f "$ScraperConfigFile" ]; then
@@ -124,8 +130,14 @@ Launch_Scraping() {
 		wait_msg
 		exit
 	fi
+	if [ "$onerom" = "1" ]; then
+		onerom="$romname"
+		echo "Launching Scraper for a single ${romname}"
+	else
+		onerom=""
+		echo "Launching Scraper for whole ${CurrentSystem}"
+	fi
 	wait_msg
-	[ "$onerom" = "1" ] && onerom="$romname" || onerom=""
 
 	# run the Libretro Scraper script
 	${ScraperApp} $CurrentSystem "$onerom"

@@ -4,11 +4,22 @@
 ## Externel arg. variables
 current_system=$1
 current_rom="$2"
+
+## External (imported) variables
 DEBUG=${DEBUG:="no"}
-NO_SHELLECT=${NO_SHELLECT:=false}
 PC_DEBUG=${PC_DEBUG:=""}
-! test -z ${PC_DEBUG} && \
+NO_SHELLECT=${NO_SHELLECT:=false}
+BOXART_DIR=${BOXART_DIR:=".images"}
+if ! test -z ${PC_DEBUG}; then
 	DEBUG="yes"
+	ScraperConfigFile=${ScraperConfigFile:="${HOME}/.scraper.cfg"}
+	HOME=${HOME:="/home"}
+	ROMS=${ROMS:="${HOME}/roms"}
+else
+	ScraperConfigFile=${ScraperConfigFile:="${HOME}/apps/scraper/.scraper.cfg"}
+	HOME=${HOME:="/mnt"}
+	ROMS=${ROMS:="/roms"}
+fi
 
 # global functions
 wait_msg() {
@@ -29,12 +40,6 @@ echo_psx() {
 		echo -e "$1"
 	fi
 }
-
-## External (imported) variables
-test -z "${ScraperConfigFile}" && \
-	ScraperConfigFile=/mnt/apps/scraper/.scraper.cfg
-test -z ${ROMS} && \
-	ROMS=/roms
 
 if test x"$DEBUG" = "xyes"; then
 	echo "DEBUG=$DEBUG"
@@ -190,7 +195,7 @@ esac
 
 #Libretro system folder name
 get_ra_alias $current_system
-mkdir -p ${ROMS}/$current_system/.images &> /dev/null
+mkdir -p ${ROMS}/$current_system/${BOXART_DIR} &> /dev/null
 clear
 echo_psx "\n*****************************************************"
 echo_psx "************** LIBRETRO Thumbnails ********************"
@@ -222,10 +227,10 @@ if ! [ -z "$current_rom" ]; then
 fi
 
 test x"$DEBUG" = "xyes" && \
-	eval echo "find ${ROMS}/$current_system -maxdepth 2 -type f ! -name '.*' ! -name '*.xml' ! -name '*.db' ! -path '*/.images/*' ! -path '*/.*/*' $romfilter"
+	eval echo "find ${ROMS}/$current_system -maxdepth 2 -type f ! -name '.*' ! -name '*.xml' ! -name '*.db' ! -path '*/${BOXART_DIR}/*' ! -path '*/.*/*' $romfilter"
 for file in $(eval "find ${ROMS}/$current_system -maxdepth 2 -type f \
 	! -name '.*' ! -name '*.xml' ! -name '*.cfg' ! -name '*.db' \
-	! -path '*/.images/*' ! -path '*/.*/*' $romfilter"); do
+	! -path '*/${BOXART_DIR}/*' ! -path '*/.*/*' $romfilter"); do
 	
 	echo "-------------------------------------------------"
 	romcount=$((romcount + 1))
@@ -431,7 +436,7 @@ for file in $(eval "find ${ROMS}/$current_system -maxdepth 2 -type f \
 
 	if [ $startcapture = true ]; then
 			
-		FILE=${ROMS}/$current_system/.images/$romNameNoExtension.png
+		FILE=${ROMS}/$current_system/${BOXART_DIR}/$romNameNoExtension.png
 		if [ -f "$FILE" ]; then
 			echo_psx "${YELLOW}already Scraped !${NONE}"
 			scrap_notrequired=$((scrap_notrequired + 1))
@@ -442,13 +447,13 @@ for file in $(eval "find ${ROMS}/$current_system -maxdepth 2 -type f \
 			WgetResult=$?
 	
 			if [ $WgetResult = 0 ] ; then
-				wget -q  "http://thumbnails.libretro.com/$remoteSystemNoSpace/${media_type}/$romNameNoExtensionNoSpace.png" -O "${ROMS}/$current_system/.images/$romNameNoExtension.png"
+				wget -q  "http://thumbnails.libretro.com/$remoteSystemNoSpace/${media_type}/$romNameNoExtensionNoSpace.png" -O "${ROMS}/$current_system/${BOXART_DIR}/$romNameNoExtension.png"
 
 				## Resizing :
-				#magick "${ROMS}/$current_system/.images/$romNameNoExtension.png" -resize 250x360 "${ROMS}/$current_system/.images/$romNameNoExtension-resized.png"
-				#mv "${ROMS}/$current_system/.images/$romNameNoExtension-resized.png"  "${ROMS}/$current_system/.images/$romNameNoExtension.png"
+				#magick "${ROMS}/$current_system/${BOXART_DIR}/$romNameNoExtension.png" -resize 250x360 "${ROMS}/$current_system/${BOXART_DIR}/$romNameNoExtension-resized.png"
+				#mv "${ROMS}/$current_system/${BOXART_DIR}/$romNameNoExtension-resized.png"  "${ROMS}/$current_system/${BOXART_DIR}/$romNameNoExtension.png"
 				
-				#pngScale "${ROMS}/$current_system/.images/$romNameNoExtension.png" "${ROMS}/$current_system/.images/$romNameNoExtension.png"
+				#pngScale "${ROMS}/$current_system/${BOXART_DIR}/$romNameNoExtension.png" "${ROMS}/$current_system/${BOXART_DIR}/$romNameNoExtension.png"
 
 				echo_psx "${GREEN}Scraped!${NONE}"
 				scrap_success=$((scrap_success + 1));
