@@ -552,7 +552,7 @@ key() {
                 redraw "$@"
                 return 0
                 ;;
-            l?|C2|"$space"?) # l / Arrow Right / Space
+            l?|C2|"$esc"|"$space"?) # l / Arrow Right / Esc (ENTER) / Space
                 case $token in
                     '?') continue ;;
                     *)
@@ -561,9 +561,6 @@ key() {
                         ;;
                 esac
                 ;;
-            "$esc") # Esc
-                pkill -9 st
-            ;;
 
             h?|D2|"$bs_char"?) # h / Arrow Left / Backspace
                 case $token in
@@ -609,23 +606,6 @@ key() {
                                                     ;;
                                             esac
                                             ;;
-                                    esac
-                                    ;;
-                                "040") # Enter
-                                    case $cur in
-                                        'no result') continue ;;
-                                    *)
-                                        ltype="Searching..."
-                                        status_line "$last"
-                                        ltype="Search mode"
-                                        token='/'
-                                        case $# in
-                                        1) # only one result, directly output it
-                                            term_reset
-                                            return 1
-                                            ;;
-                                        esac
-                                        ;;
                                     esac
                                     ;;
                                 "$bs_char"?) # Backspace
@@ -764,7 +744,7 @@ key() {
                 redraw "$@"
                 ;;
 
-            q?) # q
+            q?|"$esc_c"1) # q OR hold/press_2x ESCAPE
                 term_exit
                 exit 0
                 ;;
@@ -859,17 +839,16 @@ nl='
 '
 tab='	'
 
-# special key setting
-esc_c=$(printf '\033')
-bs_char=$(printf '\177')
+# special key setting (octal ASCII codes for chars)
+esc_c=$(printf '\033') # ESCAPE (this char is also 1st part of D-inputs ↑/↓/→/←)
+bs_char=$(printf '\177') # BACKSPACE
+space=$(printf '\040') # SPACE
 ctrl_f=$(printf '\006')
 ctrl_u=$(printf '\025')
 ctrl_n=$(printf '\016')
 ctrl_p=$(printf '\020')
 ctrl_a=$(printf '\001')
 ctrl_e=$(printf '\005')
-space=$(printf '\040')
-escape=$(printf '\033')
 
 while getopts "t:b:n:d:c:f:hil" result; do
     case "${result}" in
