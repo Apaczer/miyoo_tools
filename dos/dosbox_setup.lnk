@@ -1,0 +1,5 @@
+title=DOSBOX.BAT creator
+description=Generated DOSBOX.BAT file in content
+exec=/usr/bin/st
+params=-k -e "/bin/sh" "-c" "/mnt/apps/dosboxbat/dosbox_setup.sh [selFullPath]"
+selectordir=/roms/DOS/
