@@ -70,21 +70,23 @@ elif test -f "$content"; then
 	if zip -T "$content" >/dev/null 2>&1; then #BusyBox v1.35.0 bug: calling zip -T calls also uznzip with bad opt
 		#ZIP archive
 		if test x"$show_bat" = "xyes"; then
-			#BusyBox bug: the -p opt always return 0;
+			#BusyBox bug: the zip -p opt always return 0;
 			read_content="$(unzip -p "${content}" DOSBOX.BAT)"
 			! test -z "$read_content" \
 			 && { read_success=true ; echo "$read_content" ; }
 		else
-			unzip -l "${content}" | tr -s ' ' | cut -d' ' -f5 | grep -Ei "EXE|BAT|COM" | sellect_file_func | sed 's:/:\\:g' | tee DOSBOX.BAT && zip -m "${content}" DOSBOX.BAT >/dev/null \
+			unzip -l "${content}" | cut -F5 | grep -Ei "EXE|BAT|COM" | sellect_file_func | sed 's:/:\\:g' | tee DOSBOX.BAT && zip -m "${content}" DOSBOX.BAT >/dev/null \
 			 && write_success=true
 		fi
 	elif 7zr t -bb0 -ba "${content}" >/dev/null 2>&1; then
 		#7Z archive (exclude -f5 column with 0 size calculated?)
 		if test x"$show_bat" = "xyes"; then
-			7zr e -so "${content}" DOSBOX.BAT \
-			 && read_success=true
+			#BusyBox bug: the 7zr -so opt always return 0;
+			read_content="$(7zr e -so "${content}" DOSBOX.BAT)"
+			! test -z "$read_content" \
+			 && { read_success=true ; echo "$read_content" ; }
 		else
-			7zr l -ba "${content}" | sed 's/ \+/\t/g' | cut -f6 | grep -Ei "EXE|BAT|COM" | sellect_file_func | sed 's:/:\\:g' | tee DOSBOX.BAT && 7z a -sdel "${content}" DOSBOX.BAT >/dev/null \
+			7zr l -ba "${content}" | sed 's/ \+/\t/g' | cut -f5,6 | tr '\t' '\n' | grep -Ei "EXE|BAT|COM" | sellect_file_func | sed 's:/:\\:g' | tee DOSBOX.BAT && 7zr a -sdel "${content}" DOSBOX.BAT >/dev/null \
 			 && write_success=true
 		fi
 	else
